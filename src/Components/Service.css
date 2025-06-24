@@ -1,0 +1,154 @@
+/* General styles */
+/* body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+} */
+
+.service-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.service-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.service-card, .service-card1 {
+    flex: 1 1 calc(25% - 20px);
+    background-color: rgba(224, 247, 250, 0.8);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.service-card h2 {
+    margin: 0;
+    color: #00796b;
+}
+
+.service-card p {
+    color: #555;
+}
+
+.ServicesFetchError {
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.loading,
+.error {
+    text-align: center;
+    font-size: 50px;
+    color: #0099ff;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.loading {
+    color: #0099ff;
+}
+
+.servicesbluebtn {
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 10px 50px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 20px 0;
+    transition: background-color 0.3s;
+}
+
+.servicesbluebtn:hover {
+    background-color: darkblue;
+}
+
+.error {
+    color: darkred;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .service-card, .service-card1 {
+        flex: 1 1 calc(50% - 20px);
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .service-card, .service-card1 {
+        flex: 1 1 calc(100% - 20px);
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .servicesbluebtn {
+        padding: 10px 40px;
+        font-size: 14px;
+    }
+
+    .loading,
+    .error {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .service-card, .service-card1 {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .service-card h2 {
+        font-size: 1.4rem;
+    }
+
+    .service-card p {
+        font-size: 1rem;
+    }
+
+    .servicesbluebtn {
+        padding: 10px 30px;
+        font-size: 12px;
+    }
+
+    .loading,
+    .error {
+        font-size: 30px;
+    }
+}

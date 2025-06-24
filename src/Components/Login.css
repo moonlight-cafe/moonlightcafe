@@ -1,0 +1,425 @@
+.fade-in {
+  opacity: 1;
+  transition: opacity 1s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+
+.password-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-group input {
+  flex: 1;
+}
+
+.visibility-icon {
+  position: absolute;
+  right: 12px;
+  color: rgb(71, 217, 168);
+  margin-bottom: 14px;
+}
+
+
+.login-container {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+}
+
+.loginform-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  flex-direction: column;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.border-login {
+  max-width: 550px;
+  width: 100%;
+  border: 2px solid rgb(71, 217, 168);
+  box-shadow: 0 0 20px rgba(71, 217, 168, 0.5);
+  padding: 20px 50px;
+  border-radius: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeInZoom 0.6s ease forwards;
+  text-align: center;
+}
+
+.loginimage-container {
+  flex: 1;
+  background-image: url("./img/bg_img.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.loginform-group input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(71, 217, 168, 0.6);
+  border-radius: 8px;
+  color: #47d9a8;
+  outline: none;
+  transition: border-color 0.3s ease;
+  cursor: text;
+}
+
+.loginform-group input::placeholder {
+  color: rgba(71, 217, 168, 0.7);
+  /* placeholder color - lighter teal */
+}
+
+.loginform-group input:focus {
+  border-color: #47d9a8;
+  background-color: rgba(71, 217, 168, 0.15);
+  color: #47d9a8;
+}
+
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.login-h2 {
+  margin-bottom: 20px;
+  font-size: 30px;
+  color: #47d9a8;
+}
+
+.loginform-group {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.login-label {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 1px;
+  font-weight: bold;
+}
+
+.login-input {
+  width: 400px;
+  padding: 0 20px;
+  height: 45px;
+  border: 1px solid #ccc;
+  border-radius: 40px;
+  font-size: 16px;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 10px;
+  background-color: #47d9a8;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 9px;
+}
+
+.login-button:hover {
+  background-color: #017f55;
+}
+
+.not-found {
+  position: relative;
+  z-index: 2;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.selettbbl {
+  color: red;
+  font-size: 36px;
+}
+
+.forgot-link-wrapper {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.forgot-password-text {
+  font-size: 14px;
+  color: #6c63ff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.register-link {
+  margin-top: 15px;
+  color: #47d9a8;
+  text-align: center;
+}
+
+.register-link a {
+  text-decoration: underline;
+  color: #47d9a8;
+  cursor: pointer;
+}
+
+.forgot-password-text:hover {
+  color: #4b47cc;
+  text-decoration: underline;
+}
+
+
+@media (max-width: 1199px) {
+  .loginform-container {
+    padding: 30px;
+  }
+
+  .border-login {
+    max-width: 400px;
+  }
+
+  .login-h2 {
+    font-size: 24px;
+  }
+}
+
+/* ========== Tablets ========== */
+@media (max-width: 991px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .loginimage-container {
+    height: 40vh;
+  }
+
+  .loginform-container {
+    padding: 25px;
+    box-shadow: none;
+  }
+
+  .border-login {
+    padding: 25px 30px;
+    border-radius: 30px;
+  }
+
+  .login-h2 {
+    font-size: 22px;
+  }
+
+  .login-input {
+    max-width: 100%;
+  }
+}
+
+/* ========== Phones ========== */
+@media (max-width: 767px) {
+  .loginform-container {
+    padding: 20px;
+  }
+
+  .login-h2 {
+    font-size: 20px;
+  }
+
+  .border-login {
+    padding: 20px;
+    border-radius: 25px;
+  }
+
+  .login-input {
+    height: 42px;
+    font-size: 0.95rem;
+  }
+
+  .login-button {
+    font-size: 15px;
+    height: 42px;
+  }
+}
+
+/* ========== Small Phones ========== */
+@media (max-width: 480px) {
+  .login-h2 {
+    font-size: 18px;
+  }
+
+  .login-label {
+    font-size: 14px;
+  }
+
+  .login-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .login-button {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .border-login {
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  .selettbbl {
+    font-size: 24px;
+  }
+}
+
+.splash-screen {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  cursor: none;
+  animation: fadeInOut 6s ease-in-out forwards;
+  z-index: 9999;
+}
+
+
+.splash-logo {
+  width: 200px;
+  height: auto;
+  opacity: 0;
+  animation: floatZoom 6s ease-out forwards;
+}
+
+.user-welcome {
+  font-size: 2rem;
+  color: #51d98a;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  opacity: 0;
+  animation: fadeInText 1s 1s forwards, slideInFromLeft 1s 1s forwards;
+}
+
+.welcome-message {
+  font-size: 2rem;
+  color: #51d98a;
+  font-family: "Courier New", sans-serif;
+  font-weight: normal;
+  opacity: 0;
+  animation: fadeInText 1s 2.5s forwards, slideInFromRight 1s 2.5s forwards;
+}
+
+.designer-message {
+  font-size: 1.2rem;
+  color: #3ca066;
+  font-family: "Courier New", Courier, monospace;
+  font-style: italic;
+  opacity: 0;
+  animation: fadeInText 1s 4s forwards, slideInFromBottom 1s 4s forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    display: none;
+  }
+}
+
+@keyframes floatZoom {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-30px);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(30px);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(30px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}

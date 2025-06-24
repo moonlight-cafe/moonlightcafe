@@ -1,0 +1,231 @@
+.user-profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+  background-size: 400% 400%;
+  min-height: 100vh;
+  color: #47d9a8;
+}
+
+.user-profile-container * {
+  color: #47d9a8;
+}
+
+.user-profile-card {
+  max-width: 550px;
+  width: 100%;
+  border: 2px solid rgb(71, 217, 168);
+  box-shadow: 0 0 20px rgba(71, 217, 168, 0.5);
+  padding: 20px 50px;
+  border-radius: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeInZoom 0.6s ease forwards;
+  text-align: center;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.user-profile-title {
+  margin-bottom: 25px;
+  font-size: 30px;
+  text-align: center;
+  border-bottom: 2px solid #47d9a8;
+  padding-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+/* NEW FORMAT: LABEL || INPUT/VIEW SIDE-BY-SIDE */
+.user-field-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-field-label {
+  width: max-content;
+  font-size: 17px;
+  font-weight: 500;
+  margin: 0px 10px 0px 0px;
+  text-align: left;
+}
+
+.user-field-value {
+  flex: 1;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(71, 217, 168, 0.1);
+  border: 1px solid rgba(71, 217, 168, 0.2);
+  cursor: pointer;
+}
+
+.user-field-value span.material-symbols-outlined {
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  font-variation-settings: 'wght' 600;
+  transition: color 0.2s;
+}
+
+.user-field-value span.material-symbols-outlined:hover {
+  color: #3bc397;
+}
+
+.user-edit-input {
+  flex: 1;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #47d9a833;
+  border-radius: 8px;
+  background-color: #47d9a811;
+  color: #47d9a8 !important;
+  font-size: 15px;
+  outline: none;
+}
+
+.user-edit-input::placeholder {
+  color: #47d9a877;
+}
+
+.change-password-link {
+  text-align: right;
+  margin-top: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  color: teal;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.change-password-link:hover {
+  color: #4f6fff;
+}
+
+.profile-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.edit-profile-btn,
+.logout-btn-profile {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-profile-btn {
+  background-color: #47d9a8;
+  color: white;
+}
+
+.logout-btn-profile {
+  background-color: #ff4f4f;
+  color: white;
+}
+
+.edit-profile-btn:hover {
+  background-color: #3bc397;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(71, 217, 168, 0.3);
+}
+
+.logout-btn-profile:hover {
+  background-color: #e94747;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 79, 79, 0.3);
+}
+
+/* Responsive layout for mobile */
+@media screen and (max-width: 600px) {
+  .user-profile-card {
+    padding: 25px 20px;
+  }
+
+  .user-profile-title {
+    font-size: 24px;
+  }
+
+  .user-field-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-field-label {
+    width: max-content;
+    margin-bottom: 6px;
+    margin-left: 14px;
+    margin-bottom: -8px;
+  }
+
+  .user-field-value,
+  .user-edit-input {
+    width: 100% !important;
+  }
+
+  .change-password-link {
+    /* text-align: left; */
+    width: 100%;
+  }
+
+  .profile-button-group {
+    /* flex-direction: column; */
+    gap: 10px;
+  }
+
+  .edit-profile-btn,
+  .logout-btn-profile {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* Extra small screens (optional) */
+@media screen and (max-width: 360px) {
+  .user-profile-title {
+    font-size: 20px;
+  }
+
+  .user-field-label {
+    width: max-content;
+    font-size: 14px;
+    margin-bottom: 6px;
+    margin-left: 14px;
+    margin-bottom: -8px;
+  }
+
+  .user-edit-input,
+  .user-field-value {
+    font-size: 14px;
+    padding: 8px;
+    width: 100% !important;
+  }
+
+  .edit-profile-btn,
+  .logout-btn-profile {
+    font-size: 14px;
+    padding: 8px;
+  }
+}

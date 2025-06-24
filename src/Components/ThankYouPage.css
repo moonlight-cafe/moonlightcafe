@@ -1,0 +1,44 @@
+.thank-you-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #4CAF50;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    position: relative;
+    z-index: 5;
+}
+
+.large-icon {
+    font-size: 10rem;
+    color: #4CAF50;
+}
+
+.site-header {
+    margin-bottom: 20px;
+}
+
+.main-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-content__checkmark {
+    font-size: 48px;
+    color: #4CAF50;
+}
+
+.site-header__title{
+    color: #4CAF50;
+
+}
+
+.site-footer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #777;
+}
