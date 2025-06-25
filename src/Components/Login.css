@@ -190,6 +190,65 @@
   text-decoration: underline;
 }
 
+.popup {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  padding: 25px 25px;
+  width: 400px;
+  max-width: 90%;
+  word-wrap: break-word;
+  white-space: normal;
+  border-radius: 5px;
+  text-align: left;
+  color: white !important;
+  padding-right: 50px;
+  z-index: 1;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeInOut 5s ease-in-out;
+}
+
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+.popup.success {
+  background-color: rgba(76, 175, 80, 0.5);
+}
+
+.popup.error {
+  background-color: rgba(244, 67, 54, 0.5);
+}
+
+.close-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
 
 @media (max-width: 1199px) {
   .loginform-container {
@@ -290,6 +349,12 @@
 
   .selettbbl {
     font-size: 24px;
+  }
+
+  .contactus-popup {
+    right: 10px;
+    left: 10px;
+    width: auto;
   }
 }
 

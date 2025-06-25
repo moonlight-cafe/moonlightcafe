@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
@@ -17,8 +17,18 @@ export default function ViewCart() {
   const [error, setError] = useState(null);
   const [includeTip, setIncludeTip] = useState(false);
   const [isCartEmpty, setIsCartEmpty] = useState(false);
-  const [customTip, setCustomTip] = useState(10);
+  const [customTip, setCustomTip] = useState(0);
+  const [popup, setPopup] = useState({ message: "", type: "", visible: false });
+  const popupTimer = useRef(null);
   const navigate = useNavigate();
+
+  const showPopup = (message, type = "error") => {
+    setPopup({ message, type, visible: true });
+    if (popupTimer.current) clearTimeout(popupTimer.current);
+    popupTimer.current = setTimeout(() => {
+      setPopup((prev) => ({ ...prev, visible: false }));
+    }, 5000);
+  };
 
   useEffect(() => {
     const loginCheck = Methods.checkLoginStatus();
@@ -44,7 +54,7 @@ export default function ViewCart() {
   const calculateTotalPrice = useCallback(
     (items) => {
       const subtotal = items.reduce((acc, item) => acc + Number(item.price), 0);
-      const tipAmount = includeTip ? Math.max(10, Number(customTip)) : 0;
+      const tipAmount = includeTip ? Math.max(0, Number(customTip)) : 0;
       const finalPrice = subtotal + tipAmount;
       setTotalPrice(finalPrice);
     },
@@ -121,6 +131,13 @@ export default function ViewCart() {
 
   const handleOrderPlaced = async () => {
     try {
+
+      const tip = Number(customTip);
+      if (includeTip && (tip < 10 || tip > 500)) {
+        showPopup("Please enter a tip between ₹10 and ₹500.", "error");
+        return;
+      }
+
       const cartData = {
         customerid: customerdata._id,
         data: cartItems.map((item) => ({
@@ -133,6 +150,7 @@ export default function ViewCart() {
         })),
         totalamount: parseInt(totalPrice),
         includetip: includeTip ? 1 : 0,
+        tipamount: customTip
       };
 
       const response = await axios.post(`${backendurl}addtocart`, cartData);
@@ -145,102 +163,119 @@ export default function ViewCart() {
       }
     } catch (err) {
       console.error("Error placing the order:", err);
-      alert("Error placing the order. Please try again.");
+      // alert("Error placing the order. Please try again.");
     }
   };
 
   return (
-    <div className="view-cart-container">
-      <h2 className="view-cart-h2">Your Cart</h2>
-      <hr
-        style={{
-          backgroundColor: "#47d9a8",
-          height: "2px",
-          border: "none",
-        }}
-      />
-      <div className="customer-details">
-        <p>Name: {clientName}</p>
-        <p>Email: {clientEmail}</p>
-        <p>Table No: {tableNo}</p>
-      </div>
+    <>
+      <div className="view-cart-container">
+        <h2 className="view-cart-h2">Your Cart</h2>
+        <hr
+          style={{
+            backgroundColor: "#47d9a8",
+            height: "2px",
+            border: "none",
+          }}
+        />
+        <div className="customer-details">
+          <p>Name: {clientName}</p>
+          <p>Email: {clientEmail}</p>
+          <p>Table No: {tableNo}</p>
+        </div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p className="empty-cart">{error}</p>
-      ) : cartItems.length === 0 ? (
-        <p className="empty-cart">Your cart is empty.</p>
-      ) : (
-        <div>
-          <div className="view-cart-items">
-            {cartItems.map((item) => (
-              <div key={item._id} className="view-cart-item">
-                <img src={item.imageurl} alt={item.foodname} className="view-cart-item-image" />
-                <div className="view-cart-item-details">
-                  <h4 className="view-cart-item-details-h4">{item.foodname}</h4>
-                  <p className="view-cart-item-details-p">Price: ₹{Number(item.price).toFixed(2)}</p>
-                  <div className="quantity-controls">
-                    <button className="view-cart-item-details-button" onClick={() => handleQuantityChange(item.foodid, item.quantity - 1)}>
-                      <i className="fa-solid fa-minus fa-lg"></i>
-                    </button>
-                    <span className="quantity-display">{item.quantity}</span>
-                    <button className="view-cart-item-details-button" onClick={() => handleQuantityChange(item.foodid, item.quantity + 1)}>
-                      <i className="fa-solid fa-plus fa-lg"></i>
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p className="empty-cart">{error}</p>
+        ) : cartItems.length === 0 ? (
+          <p className="empty-cart">Your cart is empty.</p>
+        ) : (
+          <div>
+            <div className="view-cart-items">
+              {cartItems.map((item) => (
+                <div key={item._id} className="view-cart-item">
+                  <img src={item.imageurl} alt={item.foodname} className="view-cart-item-image" />
+                  <div className="view-cart-item-details">
+                    <h4 className="view-cart-item-details-h4">{item.foodname}</h4>
+                    <p className="view-cart-item-details-p">Price: ₹{Number(item.price).toFixed(2)}</p>
+                    <div className="quantity-controls">
+                      <button className="view-cart-item-details-button" onClick={() => handleQuantityChange(item.foodid, item.quantity - 1)}>
+                        <i className="fa-solid fa-minus fa-lg"></i>
+                      </button>
+                      <span className="quantity-display">{item.quantity}</span>
+                      <button className="view-cart-item-details-button" onClick={() => handleQuantityChange(item.foodid, item.quantity + 1)}>
+                        <i className="fa-solid fa-plus fa-lg"></i>
+                      </button>
+                    </div>
+                    <button className="view-cart-item-details-button" onClick={() => handleRemoveItem(item.foodid)}>
+                      <i class="fa-solid fa-trash"></i>
                     </button>
                   </div>
-                  <button className="view-cart-item-details-button" onClick={() => handleRemoveItem(item.foodid)}>
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            <div className="tip-checkbox">
+              <label className="switch-wrapper">
+                <input
+                  type="checkbox"
+                  checked={includeTip}
+                  onChange={handleTipChange}
+                  id="tip-checkbox"
+                  className="switch-checkbox"
+                />
+                <span className="switch-slider" />
+                <span className="switch-label">Include Tip</span>
+              </label>
+
+              {includeTip && (
+                <input
+                  type="text"
+                  value={customTip}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    setCustomTip(value === '0' ? '0' : Number(value));
+                  }}
+                  className="tip-amount-input"
+                  placeholder="Min ₹10"
+                />
+              )}
+            </div>
+
+            <h3 className="total-price-h3">Total Price: ₹{totalPrice.toFixed(2)}</h3>
+
+            <div className="view-cart-summary">
+              <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/dine-in/menu/${redirecturl}`)}>Add Another Item</button>
+              <button className="view-cart-checkout-button spaced-button" onClick={handleOrderPlaced}>Order Placed</button>
+              <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/order/history/${redirecturl}`)}>View Last Orders</button>
+            </div>
           </div>
+        )}
 
-          <div className="tip-checkbox">
-            <input
-              type="checkbox"
-              checked={includeTip}
-              onChange={handleTipChange}
-              id="tip-checkbox"
-            />
-            <label htmlFor="tip-checkbox">Add Tip</label>
-
-            {includeTip && (
-              <input
-                type="number"
-                min="10"
-                max="5000"
-                step="1"
-                value={customTip}
-                onChange={(e) => {
-                  const value = Math.max(10, Number(e.target.value));
-                  setCustomTip(value);
-                }}
-                className="tip-amount-input"
-                placeholder="Min ₹10"
-              />
-            )}
-
-          </div>
-
-          <h3 className="total-price-h3">Total Price: ₹{totalPrice.toFixed(2)}</h3>
-
-          <div className="view-cart-summary">
-            <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/dine-in/menu/${redirecturl}`)}>Add Another Item</button>
-            <button className="view-cart-checkout-button spaced-button" onClick={handleOrderPlaced}>Order Placed</button>
+        {/* Show buttons only if cart is empty */}
+        {isCartEmpty && (
+          <div style={{ marginTop: "20px" }}>
+            <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/dine-in/menu/${redirecturl}`)}>Add something</button>
             <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/order/history/${redirecturl}`)}>View Last Orders</button>
           </div>
-        </div>
-      )}
+        )}
+      </div >
+      {
+        popup.visible && (
+          <div className={`popup ${popup.type}`}>
+            {popup.message}
+            <span
+              className="material-symbols-outlined close-icon"
+              tabIndex="-1"
+              onClick={() => setPopup({ ...popup, visible: false })}
+            >
+              close
+            </span>
+          </div>
+        )
+      }
+    </>
 
-      {/* Show buttons only if cart is empty */}
-      {isCartEmpty && (
-        <div style={{ marginTop: "20px" }}>
-          <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/dine-in/menu/${redirecturl}`)}>Add something</button>
-          <button className="view-cart-checkout-button spaced-button" onClick={() => navigate(`/order/history/${redirecturl}`)}>View Last Orders</button>
-        </div>
-      )}
-    </div>
   );
 }
