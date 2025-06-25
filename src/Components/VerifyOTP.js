@@ -13,7 +13,8 @@ const cafelogo = Config.moonlightcafelogo;
 export default function VerifyOTP() {
     const navigate = useNavigate();
     const [otp, setOtp] = useState(new Array(6).fill(""));
-    const [loading, setLoading] = useState(false);
+    const [verifyLoading, setVerifyLoading] = useState(false);
+    const [resendLoading, setResendLoading] = useState(false);
     const [timer, setTimer] = useState(0);
     const inputsRef = useRef([]);
     const email = localStorage.getItem("otp_email");
@@ -70,41 +71,38 @@ export default function VerifyOTP() {
             showPopup("Please enter all 6 digits.");
             return;
         }
-        setLoading(true);
-        try {
-            console.log("Verifying OTP with:", { email, otp: otpValue });
 
+        setVerifyLoading(true);
+        try {
             const response = await axios.post(`${backendurl}verify/otp`, {
                 email,
                 otp: otpValue,
             });
 
-            console.log("Response:", response.data);
-
             if (response.data.status === 200) {
-                const token = response.data.token;
+                showPopup(response.data.message || "OTP verified successfully!", "success");
+                localStorage.setItem("verified_otp", email)
+                localStorage.setItem("reset_token", response.data.token)
+                localStorage.removeItem("otp_email");
 
-                showPopup("OTP verified successfully!", "success");
                 setTimeout(() => {
-                    window.location.href = `/reset/password?token=${token}`;
+                    window.location.href = `/reset/password`;
                 }, 1000);
             } else {
                 showPopup(response.data.message || "Invalid OTP.");
             }
         } catch (err) {
             console.error("Verification error:", err);
-            const errorMsg =
-                err.response?.data?.message || err.message || "Verification failed.";
-            showPopup(errorMsg);
+            showPopup(err.response?.data?.message || err.message || "Verification failed.");
         } finally {
-            setLoading(false);
+            setVerifyLoading(false);
         }
     };
 
     const handleResend = async () => {
         if (timer > 0) return;
 
-        setLoading(true);
+        setResendLoading(true);
         try {
             if (!email) throw new Error("No email found.");
 
@@ -120,7 +118,7 @@ export default function VerifyOTP() {
             console.error("Resend OTP error:", err);
             showPopup("Error resending OTP.");
         } finally {
-            setLoading(false);
+            setResendLoading(false);
         }
     };
 
@@ -157,14 +155,15 @@ export default function VerifyOTP() {
                 </div>
 
                 <div className="otp-button-group">
-                    <button className="otp-btn" onClick={handleVerify} disabled={loading}>
-                        {loading ? "Verifying..." : "Verify OTP"}
+                    <button className="otp-btn" onClick={handleVerify} disabled={verifyLoading}>
+                        {verifyLoading ? "Verifying..." : "Verify OTP"}
                     </button>
-                    <button className="otp-btn" onClick={handleResend} disabled={loading || timer > 0}>
-                        {loading ? "Resending..." : timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
+                    <button className="otp-btn" onClick={handleResend} disabled={resendLoading || timer > 0}>
+                        {resendLoading ? "Resending..." : timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
                     </button>
                 </div>
             </div>
+
             {popup.visible && (
                 <div className={`popup ${popup.type}`}>
                     {popup.message}

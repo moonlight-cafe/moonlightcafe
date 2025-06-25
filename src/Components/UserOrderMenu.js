@@ -155,7 +155,7 @@ export default function UserOrderMenu() {
           />
           {searchQuery && (
             <span
-              className="material-symbols-outlined close-icon"
+              className="material-symbols-outlined search-close-icon"
               onClick={() => setSearchQuery("")}
               style={{ cursor: "pointer" }}
             >

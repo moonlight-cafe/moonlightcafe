@@ -29,33 +29,39 @@ export default function ResetPassword() {
         };
 
         useEffect(() => {
-                const params = new URLSearchParams(window.location.search);
-                const token = params.get("token");
-                const email = localStorage.getItem("otp_email");
-                if (!token || !email) {
-                        navigate("/forgetpassword");
-                        return;
-                }
+                const verifyToken = async () => {
+                        const email = localStorage.getItem("verified_otp");
+                        const token = localStorage.getItem("reset_token");
 
-                fetch(`${backendurl}verify/otp/token`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ verify: token, email }),
-                })
-                        .then((res) => res.json())
-                        .then((data) => {
+                        if (!token || !email) {
+                                navigate("/forgetpassword");
+                                return;
+                        }
+
+                        try {
+                                const response = await fetch(`${backendurl}verify/otp/token`, {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ verify: token, email }),
+                                });
+
+                                const data = await response.json();
+
                                 if (data.status === 200) {
                                         setIsValidToken(true);
                                 } else {
                                         showPopup(data.message || "Invalid or expired token");
                                         navigate("/login");
                                 }
-                        })
-                        .catch((err) => {
-                                console.error("Token verification failed", err);
+                        } catch (error) {
+                                console.error("Token verification failed", error);
                                 navigate("/login");
-                        });
+                        }
+                };
+
+                verifyToken();
         }, [navigate]);
+
 
         const handleResetClick = (e) => {
                 e.preventDefault();
@@ -99,8 +105,9 @@ export default function ResetPassword() {
 
                         const data = await response.json();
                         if (data.status === 200) {
-                                showPopup("Password updated successfully!", "success");
-                                localStorage.removeItem("otp_email");
+                                showPopup(data.message || "Password updated successfully!", "success");
+                                localStorage.removeItem("verified_otp");
+                                localStorage.removeItem("reset_token");
 
                                 let redirecturl = "profile";
                                 const cookie = document.cookie.split("; ").find((c) => c.startsWith("selectedTable="));
@@ -116,6 +123,8 @@ export default function ResetPassword() {
                                 }
                                 setTimeout(() => navigate(`/user/profile/${redirecturl}`), 2000);
                         } else {
+                                localStorage.removeItem("verified_otp");
+                                localStorage.removeItem("reset_token");
                                 showPopup(data.message || "Failed to reset password.");
                         }
                 } catch (err) {

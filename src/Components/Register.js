@@ -31,7 +31,7 @@ const RegistrationPage = () => {
     if (popupTimer.current) clearTimeout(popupTimer.current);
     popupTimer.current = setTimeout(() => {
       setPopup((prev) => ({ ...prev, visible: false }));
-    }, 10000);
+    }, 5000);
   };
 
   const handleSubmit = async (e) => {

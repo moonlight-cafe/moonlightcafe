@@ -1,3 +1,4 @@
+/* View Cart Container */
 .view-cart-container {
     font-family: Arial, sans-serif;
     margin: 0 auto;
@@ -6,7 +7,6 @@
     width: 100vw;
     max-width: 800px;
     padding: 20px;
-    /* color: #333; */
     border: 1px solid #47d9a8;
     animation: fadeInZoom 0.6s ease forwards;
     box-sizing: border-box;
@@ -32,51 +32,115 @@
     margin-right: 10px;
 }
 
+/* Container */
 .tip-checkbox {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
     margin-top: 20px;
-}
-
-.tip-checkbox input[type="checkbox"] {
-    margin-right: 10px;
+    font-size: 16px;
+    color: #cb5555;
+    width: max-content;
+    position: relative;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
 }
 
+/* Toggle wrapper */
+.switch-wrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+    user-select: none;
+}
+
+/* Hide native checkbox */
+.switch-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* Switch appearance */
+.switch-slider {
+    position: relative;
+    width: 46px;
+    height: 24px;
+    background-color: #cb5555;
+    border-radius: 999px;
+    transition: background-color 0.3s ease;
+}
+
+.switch-slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+/* Checked styles */
+.switch-checkbox:checked+.switch-slider {
+    background-color: #47d9a8;
+}
+
+.switch-checkbox:checked+.switch-slider::before {
+    transform: translateX(22px);
+}
+
+/* Label beside toggle */
+.switch-label {
+    font-size: 16px;
+    color: #cb5555;
+    transition: color 0.3s ease;
+}
+
+/* Label color change on toggle */
+.switch-checkbox:checked~.switch-label {
+    color: #47d9a8;
+    font-weight: bold;
+}
+
+/* Tip input */
 .tip-amount-input {
-    margin-left: 50px;
-    padding: 5px;
+    padding: 8px;
     width: 100px;
     font-size: 16px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    background-color: rgba(71, 217, 168, 0.3);
+    background-color: rgba(71, 217, 168, 0.2);
     color: #47d9a8;
     outline: none;
-    transition: border 0.2s ease;
+    transition: border 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    animation: fadeInInput 0.3s ease forwards;
 }
 
 .tip-amount-input:focus {
     border: 1px solid #47d9a8;
 }
 
-.empty-cart{
+/* Input animation */
+@keyframes fadeInInput {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.empty-cart {
     color: #cb5555;
     font-size: 30px;
-}
-
-.tip-checkbox {
-    color: #cb5555;
-    font-size: 16px;
-    cursor: pointer;
-    width: max-content;
-}
-
-.tip-checkbox input[type="checkbox"]:checked+label {
-    font-weight: bold;
-    color: #28a745;
 }
 
 .view-cart-h2 {
@@ -86,7 +150,7 @@
     color: #47d9a8;
 }
 
-.customer-details{
+.customer-details {
     color: #47d9a8;
 }
 
@@ -102,7 +166,6 @@
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
-    ;
 }
 
 .view-cart-item:hover {
@@ -135,7 +198,6 @@
     font-size: 25px;
     color: #47d9a8;
 }
-
 
 .view-cart-item-details {
     flex: 1;
@@ -197,6 +259,8 @@
     background-color: #017f55;
 }
 
+/* ---------------------- Responsive Design ---------------------- */
+
 @media (max-width: 768px) {
     .view-cart-container {
         padding: 10px;
@@ -251,7 +315,6 @@
         justify-content: right;
     }
 }
-
 
 @media (max-width: 480px) {
     .view-cart-h2 {

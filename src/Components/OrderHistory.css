@@ -215,7 +215,7 @@
         color: white;
         border: none;
         font-size: 18px;
-        padding: 10px 20px;
+        padding: 10px 50px;
         border-radius: 6px;
         font-weight: bold;
         cursor: pointer;
@@ -223,7 +223,7 @@
 }
 
 .mainbth:hover {
-        background-color: #5dd763;
+        background-color: #349575;
         transform: scale(1.05);
 }
 
@@ -254,9 +254,10 @@
                 align-items: center;
         }
 
-        /* .mainbth {
-                width: 90%;
-        } */
+        .mainbth {
+                width: 30%;
+                padding: 10px;
+        }
 }
 
 @media (max-width:468px) {
