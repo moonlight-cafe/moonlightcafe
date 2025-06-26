@@ -7,7 +7,9 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 import _Config from '../Config.js';
+import _Methods from '../Methods.js';
 const Config = new _Config();
+const Methods = new _Methods();
 const backendurl = Config.backendurl
 
 const Service = () => {
@@ -42,17 +44,15 @@ const Service = () => {
     navigate('/home');
   };
 
+  // if (true) {
   if (loading) {
-    return (
-      <div className='ServicesFetchError'>
-        <div className="loading">Loading...</div>
-      </div>
-    );
+    return Methods.showLoader();
   }
 
   if (error) {
     return (
       <div className='ServicesFetchError'>
+        <Navbar />
         <div className="error">{error}</div>
       </div>
     );
