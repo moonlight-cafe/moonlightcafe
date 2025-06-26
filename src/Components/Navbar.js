@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Navbar.css'; 
+import './Navbar.css';
 
 import _Config from '../Config.js';
 const Config = new _Config();
@@ -88,49 +88,32 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbarcontainer" style={{ position: 'relative' }}>
+    <div className="navbarcontainer">
       <img src={navcafeimg} alt="Moonlight Cafe" className="navbarimg" />
 
-      {/* Menu button */}
-      <div className="menu-icon" onClick={toggleMenu}>
-        {menuOpen ? (
-          <i
-            className="fa-solid fa-xmark fa-xl"
-            style={{ color: '#47d9a8', marginTop: '10px', marginRight: '20px' }}
-          ></i>
-        ) : (
-          <i
-            className="fa-solid fa-bars fa-xl"
-            style={{ color: '#47d9a8', marginTop: '10px', marginRight: '20px' }}
-          ></i>
-        )}
-      </div>
+      {/* Wrapper for nav + login */}
+      <div className="nav-actions">
+        {/* Hamburger icon */}
+        <div className="menu-icon" onClick={toggleMenu}>
+          {menuOpen ? (
+            <i className="fa-solid fa-xmark fa-xl" style={{ color: '#47d9a8' }}></i>
+          ) : (
+            <i className="fa-solid fa-bars fa-xl" style={{ color: '#47d9a8' }}></i>
+          )}
+        </div>
 
-      {/* Navigation links */}
-      <nav className={`navlinks ${menuOpen ? 'open' : 'close'}`}>
-        <a href="/home" className="navlink" onClick={(e) => handleNavClick(e, '/home')}>
-          Home
-        </a>
-        <a href="/aboutus" className="navlink" onClick={(e) => handleNavClick(e, '/aboutus')}>
-          About
-        </a>
-        <a href="/services" className="navlink" onClick={(e) => handleNavClick(e, '/services')}>
-          Services
-        </a>
-        <a
-          href="/contact_us"
-          className="navlink"
-          style={{ marginRight: '20px' }}
-          onClick={(e) => handleNavClick(e, '/contact_us')}
-        >
-          Contact Us
-        </a>
+        {/* Nav links */}
+        <nav className={`navlinks ${menuOpen ? 'open' : 'close'}`}>
+          <a href="/home" className="navlink" onClick={(e) => handleNavClick(e, '/home')}>Home</a>
+          <a href="/aboutus" className="navlink" onClick={(e) => handleNavClick(e, '/aboutus')}>About</a>
+          <a href="/services" className="navlink" onClick={(e) => handleNavClick(e, '/services')}>Services</a>
+          <a href="/contact_us" className="navlink" onClick={(e) => handleNavClick(e, '/contact_us')}>Contact Us</a>
+        </nav>
 
-        {/* Login/Profile icon */}
+        {/* Login/Profile Icon */}
         <a href="/login" className="navlink-icon" onClick={handleLoginIconClick} style={{ position: 'relative' }}>
           <span className="material-symbols-outlined white-icon">account_circle</span>
 
-          {/* Popup box */}
           {showPopup && (
             <div ref={popupRef} className="profile-popup">
               <button onClick={handleProfileClick} className="popup-btn profile-btn">
@@ -143,10 +126,8 @@ export default function Navbar() {
               </button>
             </div>
           )}
-
         </a>
-
-      </nav>
+      </div>
     </div>
   );
 }
