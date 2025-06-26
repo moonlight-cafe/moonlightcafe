@@ -1,3 +1,6 @@
+import "./Methods.css"
+import Navbar from "./Components/Navbar.js"
+
 class Methods {
         getCookie(name) {
                 const value = `; ${document.cookie}`;
@@ -43,6 +46,19 @@ class Methods {
 
                 const date = new Date(dateString);
                 return date.toLocaleString('en-US', options);
+        }
+
+        showLoader() {
+                return (
+                        // <Navbar />
+                        <div className="cafe-loading-img">
+                                <img
+                                        src="https://res.cloudinary.com/dqdv99ydb/image/upload/v1749141918/tempfolder/gmd4nf2stova0qct7h3o.png"
+                                        alt="Loading Animation"
+                                        className="loading-image"
+                                />
+                        </div>
+                );
         }
 }
 export default Methods;

@@ -12,6 +12,7 @@
     width: 100px;
     height: auto;
     margin: 10px;
+    animation: floatZoom 6s ease-out forwards;
 }
 
 .nav-actions {
@@ -32,6 +33,7 @@
     margin: 15px 10px 15px 10px;
     padding: 10px;
     font-size: 1.2em;
+    animation: floatZoom 4s ease-out forwards;
 }
 
 .navlink:hover {
@@ -46,6 +48,7 @@
     color: white;
     font-size: 32px;
     vertical-align: middle;
+    animation: floatZoom 4s ease-out forwards;
     display: inline-block;
 }
 

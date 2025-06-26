@@ -16,7 +16,7 @@ import ContectUs from "./Components/ContectUs.js";
 import ViewCart from './Components/ViewCart.js';
 import OrderHistory from './Components/OrderHistory.js';
 import TakeAwayViewCart from './Components/TakeAwayViewCart.js';
-import UserOrderMenuTakeAway from './Components/UserOrderMenuTakeAway.js';
+// import UserOrderMenuTakeAway from './Components/UserOrderMenuTakeAway.js';
 import Payment from './Components/Payment.js';
 import Thakyou from './Components/Thakyou.js';
 import AboutUs from './Components/Aboutus.js';
@@ -57,7 +57,8 @@ function App() {
         {/* Dine In Flow */}
 
         {/* Take Away Flow */}
-        <Route path='/take-away/menu/:randomString' element={<UserOrderMenuTakeAway />} />
+        {/* <Route path='/take-away/menu/:randomString' element={<UserOrderMenuTakeAway />} /> */}
+        <Route path='/take-away/menu/:randomString' element={<Delevery />} />
         <Route path="/take-away/view-cart/:billno" element={<TakeAwayViewCart />} />
         {/* Take Away Flow */}
 
