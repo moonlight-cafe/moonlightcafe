@@ -17,13 +17,13 @@ const OrderHistory = () => {
         const [orders, setOrders] = useState([]);
         const [openAccordion, setOpenAccordion] = useState(null);
 
-        useEffect(() => {
-                const loginCheck = Methods.checkLoginStatus();
-                const tableCheck = Methods.checkSelectedTable();
+        // useEffect(() => {
+        //         const loginCheck = Methods.checkLoginStatus();
+        //         const tableCheck = Methods.checkSelectedTable();
 
-                if (loginCheck.status !== 200) return navigate("/login");
-                if (tableCheck.status !== 200) return navigate("/dine-in/select-table");
-        }, [navigate]);
+        //         if (loginCheck.status !== 200) return navigate("/login");
+        //         if (tableCheck.status !== 200) return navigate("/dine-in/select-table");
+        // }, [navigate]);
 
         useEffect(() => {
                 const fetchOrderHistory = async () => {
@@ -60,11 +60,11 @@ const OrderHistory = () => {
                         <td className="order-table-body-cell">{item.foodname}</td>
                         <td className="order-table-body-cell">{item.quantity}</td>
                         <td className="order-table-body-cell">₹{item.price || "N/A"}</td>
-                        <td className="order-table-body-cell">
+                        {/* <td className="order-table-body-cell">
                                 <span className={`status-badge ${item.status?.toLowerCase().replace(/\s/g, "-") || "pending"}`}>
                                         {item.status || "Pending"}
                                 </span>
-                        </td>
+                        </td> */}
                 </tr>
         );
 
@@ -91,7 +91,7 @@ const OrderHistory = () => {
                                                                                         <th className='order-table-head-cell'>Food Name</th>
                                                                                         <th className='order-table-head-cell'>Quantity</th>
                                                                                         <th className='order-table-head-cell'>Price</th>
-                                                                                        <th className='order-table-head-cell'>Status</th>
+                                                                                        {/* <th className='order-table-head-cell'>Status</th> */}
                                                                                 </tr>
                                                                         </thead>
                                                                         <tbody>

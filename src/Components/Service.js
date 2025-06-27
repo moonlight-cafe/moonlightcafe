@@ -46,24 +46,35 @@ const Service = () => {
 
   // if (true) {
   if (loading) {
-    return Methods.showLoader();
-  }
-
-  if (error) {
     return (
-      <div className='ServicesFetchError'>
+      <div className="full-height-page">
         <Navbar />
-        <div className="error">{error}</div>
+        <div className="loading-service">
+          {Methods.showLoader()}
+        </div>
       </div>
     );
   }
+  // if (true) {
+  if (error) {
+    alert('Network Connection!');
+    return (
+      <div className="full-height-page">
+        <div className='ServicesFetchError'>
+          {Methods.showLoader()}
+          <button type="button" className="mainbth" style={{ marginTop: '50px' }} onClick={returnHome}>Go to Home</button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <>
       <Navbar />
       <div className="service-container">
         <div className="service-card1" style={{ marginBottom: '15px' }} data-aos="fade-up">
-          <h1>MoonLight Café Services</h1>
+          <h1 className='service-header'>MoonLight Café Services</h1>
         </div>
 
         <div className="service-list">

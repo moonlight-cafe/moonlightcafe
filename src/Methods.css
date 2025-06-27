@@ -3,22 +3,32 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-}
-
-.loading-image {
-        width: 250px;
+        max-width: 90vw;
+        max-height: 90vh;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+    
+    .loading-image {
+        width: 100%;
         height: auto;
+        max-width: 250px;
         animation: fadeInOut 2s infinite;
-}
-
-@keyframes fadeInOut {
-
-        0%,
-        100% {
-                opacity: 0;
+    }
+    
+    @keyframes fadeInOut {
+        0%, 100% {
+            opacity: 0;
         }
-
         50% {
-                opacity: 1;
+            opacity: 1;
         }
-}
+    }
+    
+    /* Optional: adjust size on very small devices */
+    @media (max-width: 400px) {
+        .loading-image {
+            max-width: 180px;
+        }
+    }
+    
