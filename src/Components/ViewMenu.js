@@ -6,8 +6,10 @@ import "./ViewMenu.css";
 import { useNavigate } from 'react-router-dom';
 import _Config from '../Config.js';
 import Navbar from './Navbar.js';
+import _Methods from '../Methods.js';
 
 const Config = new _Config();
+const Methods = new _Methods();
 const backendurl = Config.backendurl;
 
 export default function ViewMenu() {
@@ -15,6 +17,9 @@ export default function ViewMenu() {
   const [categories, setCategories] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,8 +34,11 @@ export default function ViewMenu() {
 
         setCategories(catRes.data.data || []);
         setFoodItems(foodRes.data.data || []);
+        setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
+        setError("Failed to load menu. Please check your connection.");
+        setLoading(false);
       }
     };
 
@@ -41,10 +49,35 @@ export default function ViewMenu() {
     navigate('/home');
   };
 
+  if (loading) {
+    return (
+      <div className="full-height-page">
+        <Navbar />
+        <div className="loading-service">
+          {Methods.showLoader()}
+        </div>
+      </div>
+    );
+  }
+
+  // ❌ Show error fallback
+  if (error) {
+    alert('Network Connection!');
+    return (
+      <div className="full-height-page">
+        <Navbar />
+        <div className="ServicesFetchError">
+          {Methods.showLoader()}
+          <button type="button" className="mainbth" style={{marginTop:"50px"}} onClick={returnHome}>Home</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Menu display logic
   const filteredFoodItems = foodItems.filter((item) => {
     const matchesCategory =
-      selectedCategory === "All" ||
-      item.categorycode === selectedCategory;
+      selectedCategory === "All" || item.categorycode === selectedCategory;
 
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -66,6 +99,7 @@ export default function ViewMenu() {
         </header>
 
         <div className="menu-content">
+          {/* Categories */}
           <nav className="category-list">
             <button
               className={`category-button ${selectedCategory === "All" ? "active" : ""}`}
@@ -84,6 +118,7 @@ export default function ViewMenu() {
             ))}
           </nav>
 
+          {/* Search */}
           <div className="search-container">
             <span className="material-symbols-outlined search-icon">search</span>
 
@@ -107,6 +142,7 @@ export default function ViewMenu() {
             )}
           </div>
 
+          {/* Menu Items */}
           <section className="menu-section">
             {categoriesToShow.map((cat) => {
               const itemsInCategory = filteredFoodItems.filter(
