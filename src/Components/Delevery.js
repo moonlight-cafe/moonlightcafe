@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 
 import _Config from '../Config.js';
+import _Methods from '../Methods.js';
 const Config = new _Config();
+const Methods = new _Methods();
 const navcafeimg = Config.moonlightcafelogo
 
 export default function Delivery() {
@@ -16,7 +18,8 @@ export default function Delivery() {
                 <div className='delevery-model'>
                         <Navbar />
                         <div className='delevery-container'>
-                                <img src={navcafeimg} alt="Moonlight Cafe" className="splash-logo" />
+                                {/* <img src={navcafeimg} alt="Moonlight Cafe" className="splash-logo" /> */}
+                                {Methods.showLoader()}
                                 {/* <h2>MoonLight Cafe</h2> */}
                                 <p className="coming-soon-message">Coming Soon...</p>
                                 <button type="button" className="aboutus-mainbth" onClick={handleHomeClick}>

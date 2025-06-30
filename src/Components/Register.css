@@ -6,6 +6,7 @@
   justify-content: center;
   align-items: center;
   box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+  user-select: none
 }
 
 .registration-box {
@@ -24,6 +25,7 @@
   width: 200px;
   height: auto;
   margin-bottom: 20px;
+  user-select: none
 }
 
 .registration-form {
@@ -49,12 +51,24 @@
 
 .registration-form input::placeholder {
   color: rgba(71, 217, 168, 0.7);
+  user-select: none
 }
 
 .registration-form input:focus {
   border-color: #47d9a8;
   background-color: rgba(71, 217, 168, 0.15);
   color: #47d9a8;
+}
+
+.registration-form input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.registration-form input:-webkit-autofill:focus {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
 }
 
 .login-button {
@@ -90,6 +104,7 @@
     opacity: 0;
     transform: scale(0.8);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);

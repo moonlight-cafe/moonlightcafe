@@ -17,17 +17,18 @@ export default function Home() {
   const handleViewMenuClick = () => navigate('/view-menu');
 
   const handleDineInClick = () => {
-    const checkLogin = Methods.checkLoginStatus();
-    if (checkLogin.status === 200) {
-      const checkTable = Methods.checkSelectedTable();
-      if (checkTable.status === 200) {
-        navigate(`/dine-in/menu/${checkTable.data.redirecturl}`);
-      } else {
-        navigate("/dine-in/select-table");
-      }
-    } else {
-      navigate("/login");
-    }
+    // const checkLogin = Methods.checkLoginStatus();
+    // if (checkLogin.status === 200) {
+    //   const checkTable = Methods.checkSelectedTable();
+    //   if (checkTable.status === 200) {
+    // navigate(`/dine-in/menu/${checkTable.data.redirecturl}`);
+    //   } else {
+    navigate("/dine-in/select-table");
+    //   }
+    // } else {
+    //   localStorage.setItem("redirectAfterLogin", window.location.pathname);
+    //   navigate("/login");
+    // }
   };
 
   const handleTakeAway = async () => {

@@ -36,6 +36,7 @@ export default function UserProfile() {
         const loginCheck = Methods.checkLoginStatus();
 
         if (loginCheck.status !== 200) {
+            localStorage.setItem("redirectAfterLogin", window.location.pathname);
             navigate("/login");
             return;
         }
