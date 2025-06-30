@@ -35,6 +35,7 @@ export default function ViewCart() {
     const tableCheck = Methods.checkSelectedTable();
 
     if (loginCheck.status !== 200) {
+      localStorage.setItem("redirectAfterLogin", window.location.pathname);
       navigate("/login");
       return;
     }

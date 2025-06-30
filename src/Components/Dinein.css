@@ -9,6 +9,8 @@
   border: 1px solid rgba(71, 217, 168, 0.8);
   box-shadow: 0 0px 25px rgba(71, 217, 168, 0.8);
   overflow: hidden;
+  height: max-content;
+  transition: height 0.6s ease;
 }
 
 .table-header {
@@ -24,6 +26,27 @@
   letter-spacing: 1px;
 }
 
+@keyframes fadeTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) rotateX(40deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+.dinein-table-error {
+  color: #c0392b;
+  animation: fadeTop 0.6s ease-out forwards;
+  text-align: center;
+  margin-top: 50px;
+  font-weight: 500;
+  font-size: 30px;
+}
+
 .dine-in-note {
   font-size: 1.3rem;
   color: #d14d4d !important;
@@ -34,6 +57,18 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 30px;
+}
+
+/* Animate each table with delay */
+.table-grid {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.table-grid.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .table-item {
@@ -53,12 +88,13 @@
   transform: translateY(-8px);
 }
 
-/* Hover effect for available tables */
+/* Hover animation */
 .table-item:not(.not-available):hover {
   background-color: rgba(71, 217, 168, 0.25);
+  animation: hoverWiggle 0.4s ease-in-out;
 }
 
-/* Hover effect for not available tables */
+/* Not available hover effect */
 .table-item.not-available:hover {
   background-color: rgba(217, 81, 81, 0.25);
   box-shadow: 0 10px 20px rgba(217, 81, 81, 0.3);
@@ -93,7 +129,6 @@
   margin-top: 12px;
 }
 
-/* Conditional label colors */
 .table-item .table-availability {
   color: rgba(71, 217, 168, 1);
 }
@@ -107,6 +142,14 @@
   font-size: 1.5rem;
   text-align: center;
   margin-top: 40px;
+}
+
+/* Loader Centering */
+.center-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }
 
 /* Modal Styles */
@@ -206,6 +249,10 @@
   transform: scale(1.05);
 }
 
+.modal-buttons button:active {
+  animation: buttonPop 0.2s ease;
+}
+
 .modal-buttons button:first-child {
   background-color: #27ae60;
   color: white;
@@ -224,6 +271,7 @@
   background-color: #c0392b;
 }
 
+/* Keyframe Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -243,5 +291,53 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes tableFadeIn {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes hoverWiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(1.5deg);
+  }
+
+  50% {
+    transform: rotate(-1.5deg);
+  }
+
+  75% {
+    transform: rotate(1deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes buttonPop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.93);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }

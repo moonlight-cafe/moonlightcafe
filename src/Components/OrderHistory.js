@@ -17,13 +17,17 @@ const OrderHistory = () => {
         const [orders, setOrders] = useState([]);
         const [openAccordion, setOpenAccordion] = useState(null);
 
-        // useEffect(() => {
-        //         const loginCheck = Methods.checkLoginStatus();
-        //         const tableCheck = Methods.checkSelectedTable();
+        useEffect(() => {
+                const loginCheck = Methods.checkLoginStatus();
+                const tableCheck = Methods.checkSelectedTable();
 
-        //         if (loginCheck.status !== 200) return navigate("/login");
-        //         if (tableCheck.status !== 200) return navigate("/dine-in/select-table");
-        // }, [navigate]);
+                if (loginCheck.status !== 200) {
+                        localStorage.setItem("redirectAfterLogin", window.location.pathname);
+                        navigate("/login");
+                        return;
+                }
+                if (tableCheck.status !== 200) return navigate("/dine-in/select-table");
+        }, [navigate]);
 
         useEffect(() => {
                 const fetchOrderHistory = async () => {

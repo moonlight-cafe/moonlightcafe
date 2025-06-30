@@ -8,6 +8,16 @@
   box-sizing: border-box;
 }
 
+::selection {
+  background-color: rgba(71, 217, 168, 0.5);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+::-moz-selection {
+  background-color: rgba(71, 217, 168, 0.5);
+  color: rgba(0, 0, 0, 0.8);
+}
+
 body {
   position: relative;
   display: flex;

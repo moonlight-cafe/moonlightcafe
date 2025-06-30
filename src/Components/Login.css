@@ -55,6 +55,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   animation: fadeInZoom 0.6s ease forwards;
   text-align: center;
+  user-select: none
 }
 
 .loginimage-container {
@@ -80,7 +81,6 @@
 
 .loginform-group input::placeholder {
   color: rgba(71, 217, 168, 0.7);
-  /* placeholder color - lighter teal */
 }
 
 .loginform-group input:focus {
@@ -89,6 +89,16 @@
   color: #47d9a8;
 }
 
+.loginform-group input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.loginform-group input:-webkit-autofill:focus {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+}
 
 @keyframes fadeInZoom {
   0% {
@@ -139,7 +149,9 @@
   font-size: 16px;
   cursor: pointer;
   padding: 9px;
+  user-select: none
 }
+
 
 .login-button:hover {
   background-color: #017f55;
@@ -405,7 +417,7 @@
   font-size: 1.2rem;
   color: #3ca066;
   font-family: "Courier New", Courier, monospace;
-  font-style: italic;
+  /* font-style: italic; */
   opacity: 0;
   animation: fadeInText 1s 4s forwards, slideInFromBottom 1s 4s forwards;
 }

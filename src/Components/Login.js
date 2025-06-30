@@ -45,6 +45,8 @@ function Login() {
           number: data.number || "",
         };
 
+        userNameRef.current = customerData.name
+
         const setCookie = (name, value, hours) => {
           const expires = new Date();
           expires.setTime(expires.getTime() + hours * 60 * 60 * 1000);
@@ -55,8 +57,10 @@ function Login() {
 
         setSplashVisible(true);
         setPopup({ message: "", type: "", visible: false });
+        const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+        localStorage.removeItem("redirectAfterLogin");
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = redirectPath;
         }, 6000);
       } else {
         showPopup(data.message || "Invalid credentials", "error");
@@ -74,15 +78,15 @@ function Login() {
       {splashVisible ? (
         <div className="splash-screen">
           <img src={cafelogo} alt="Logo" className="splash-logo" />
-          {userNameRef.current && <p className="user-welcome p-10">Hey, {userNameRef.current}</p>}
+          {userNameRef.current && <p className="user-welcome p-10">Hello, {userNameRef.current}</p>}
           <p className="welcome-message green p-10">Welcome back to Moonlight Cafe!</p>
-          <p className="designer-message green p-10">Crafted with care by Jainil.</p>
+          <p className="designer-message green p-10">Developed by Jainil and Team.</p>
         </div>
       ) : (
         <div className="login-container">
           <div className="loginform-container">
             <div className="border-login">
-              <img src={cafelogo} alt="Moonlight Cafe" style={{ width: "200px", marginBottom: "40px" }} />
+              <img src={cafelogo} alt="Moonlight Cafe" style={{ width: "200px", marginBottom: "40px", userSelect: "none" }} />
 
               <form onSubmit={handleLogin}>
                 <div className="loginform-group">
@@ -92,6 +96,7 @@ function Login() {
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     required
+                    style={{ userSelect: "none" }}
                   />
                 </div>
 
@@ -102,6 +107,7 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    style={{ userSelect: "none" }}
                   />
 
                   <span
