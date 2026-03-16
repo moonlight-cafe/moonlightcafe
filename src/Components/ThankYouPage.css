@@ -1,0 +1,220 @@
+.thankyou-wrapper {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.thankyou-box {
+    max-width: 550px;
+    width: 100%;
+    border: 2px solid #47d9a8;
+    box-shadow: 0 0 20px rgba(71, 217, 168, 0.5);
+    padding: 0;
+    border-radius: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeInZoom 0.6s ease forwards;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.thankyouiimg {
+    padding: 30px 12px 0px 12px;
+}
+
+.thankyou-icon {
+    font-size: 6rem;
+    color: #47d9a8;
+    animation: fadeInZoom 1.5s ease-in-out forwards;
+}
+
+/* If using an image instead of icon */
+.thankyou-image {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 30px;
+    display: block;
+    border-radius: 12px;
+    animation: fadeInZoom 1.5s ease forwards;
+}
+
+.thankyoutext {
+    padding: 0px 0px 30px 0px;
+}
+
+.thankyou-text {
+    font-size: 1.125rem;
+    margin-bottom: 10px;
+    padding: 0 40px;
+    animation: fadeInZoom 1.5s ease-in-out forwards;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+
+    .thankyou-text {
+        font-size: 1rem;
+        padding: 0 35px;
+    }
+
+    .thankyou-box {
+        border-radius: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .thankyou-text {
+        font-size: 0.95rem;
+        padding: 0 20px;
+    }
+
+    .thankyou-icon {
+        font-size: 4.5rem;
+    }
+
+    .thankyou-box {
+        border-radius: 20px;
+    }
+}
+
+/* Overlay */
+.rating-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+/* Modal */
+.rating-modal.redesigned {
+    width: 92%;
+    max-width: 420px;
+    background: #1e1e1eaf;
+    border-radius: 24px;
+    padding: 28px 24px 24px;
+    text-align: center;
+    box-shadow: 0 10px 200px #47d9a899;
+    border: 1px solid #47d9a8;
+    animation: scaleFade 0.35s ease;
+    position: relative;
+}
+
+/* Title */
+.rating-title {
+    color: #47d9a8;
+    font-size: 1.4rem;
+    margin-bottom: 6px;
+}
+
+.rating-subtitle {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+/* ⭐ STAR RATING (Same as Admin) */
+.star-rating {
+    display: inline-flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.star {
+    position: relative;
+    font-size: 2.6rem;
+    color: #555;
+    transition: transform 0.15s ease, color 0.2s ease;
+}
+
+.star.full {
+    color: #f5b301;
+}
+
+.star.half {
+    color: #555;
+}
+
+.star.half::before {
+    content: "kid_star";
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #f5b301;
+}
+
+.star-rating.interactive .star {
+    cursor: pointer;
+}
+
+.star-rating.interactive .star:hover {
+    transform: scale(1.15);
+}
+
+/* Modal / Layout (basic) */
+.rating-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.rating-modal {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.rating-value {
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+/* Rating number */
+.rating-value {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+/* Textarea */
+.rating-modal textarea {
+    width: 100%;
+    min-height: 95px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid #222;
+    background: #161616;
+    color: #fff;
+    resize: none;
+    font-size: 0.9rem;
+}
+
+/* Animation */
+@keyframes scaleFade {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

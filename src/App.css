@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+* {
+  font-family: "EB Garamond", serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
+  box-sizing: border-box;
+}
+
+::selection {
+  background-color: rgba(71, 217, 168, 0.5);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+::-moz-selection {
+  background-color: rgba(71, 217, 168, 0.5);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  transition: background-image 1s ease-in-out;
+  overflow-x: hidden;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  bottom: 0;
+  z-index: -999;
+}
+
+
+.common-box-comtainer {
+  display: flex;
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  flex-direction: column;
+}
+
+.common-box {
+  max-width: 550px;
+  width: 100%;
+  border: 2px solid rgb(71, 217, 168);
+  box-shadow: 0 0 20px rgba(71, 217, 168, 0.5);
+  padding: 20px 50px;
+  border-radius: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: color 0.3s ease;
+  text-align: center;
+  animation: fadeInZoom 0.6s ease forwards;
+  user-select: none;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1199px) {
+  .common-box-comtainer {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 991px) {
+  .common-box-comtainer {
+    flex-direction: column;
+  }
+
+  .common-box {
+    padding: 25px 30px;
+    border-radius: 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  .common-box-comtainer {
+    padding: 20px;
+  }
+
+  .common-box {
+    padding: 20px;
+    border-radius: 25px;
+  }
+}
+
+@media (max-width:480px) {
+  .common-box {
+    padding: 15px;
+    border-radius: 20px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 217, 168, 0.4);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 217, 168, 0.7);
+  box-shadow: 0 0 10px rgba(71, 217, 168, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #47d9a8;
+  box-shadow: 0 0 15px rgba(71, 217, 168, 0.5);
+}
+
+/* Glowing effect on scroll */
+:hover::-webkit-scrollbar-thumb {
+  background: rgba(71, 217, 168, 0.6);
+  box-shadow: 0 0 8px rgba(71, 217, 168, 0.2);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.ms-icon-fill {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
+}

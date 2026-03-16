@@ -1,0 +1,143 @@
+/* GLOBAL */
+.home-wrapper {
+    /* background: #1e1e1e; */
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+/* HERO SECTION */
+.hero {
+    text-align: center;
+    padding: 40px 20px 20px;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.hero-logo {
+    width: 260px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 8px rgba(71, 217, 168, 0.4));
+}
+
+.hero-title {
+    color: #47d9a8;
+    font-size: 2.4rem;
+    letter-spacing: 1px;
+    margin: 10px 0;
+    animation: upFade 0.8s ease forwards;
+}
+
+.hero-tagline {
+    color: #b7f5dc;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+    vertical-align: middle;
+    letter-spacing: 0.2px;
+}
+
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    margin-left: 8px;
+    vertical-align: bottom;
+    background-color: currentColor;
+    animation: blink-caret 700ms steps(1) infinite;
+    border-radius: 1px;
+}
+
+@keyframes blink-caret {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* ACTION CARDS */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 30px 20px;
+}
+
+.action-card {
+    background: #1e1e1e85;
+    padding: 5px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(71, 217, 168, 0.2);
+    box-shadow: 0 0 10px rgba(71, 217, 168, 0.15);
+    transition: 0.4s ease;
+    cursor: pointer;
+}
+
+.action-card:hover {
+    background: #47d9a820;
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 0 20px rgba(71, 217, 168, 0.45);
+}
+
+.action-card-h3 {
+    color: #47d9a8;
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+}
+
+.action-card p {
+    color: #98e5ca;
+    font-size: 0.9rem;
+}
+
+/* CLOCK */
+.clock-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1e1e1e;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-family: monospace;
+    color: #47d9a8;
+    font-size: 1.1rem;
+    border: 1px solid rgba(71, 217, 168, 0.2);
+    box-shadow: 0 0 15px rgba(71, 217, 168, 0.3);
+    animation: flipIn 0.6s ease forwards;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes upFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes flipIn {
+    from {
+        opacity: 0;
+        transform: rotateX(-90deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
+}

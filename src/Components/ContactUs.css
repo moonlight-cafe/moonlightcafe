@@ -1,0 +1,209 @@
+.contactus-global {
+  font-family: "EB Garamond", serif;
+  box-sizing: border-box;
+}
+
+.contactus-container {
+  position: relative;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)),
+    url("https://res.cloudinary.com/dqdv99ydb/image/upload/v1751306145/tempfolder/uoxcdol5xkwtoz3jaw3y.jpg");
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding-bottom: 120px;
+  animation: contactus-fadeIn 1.5s ease forwards;
+}
+
+.contactus-form-container {
+  margin-right: 600px;
+  text-align: center;
+}
+
+.contactus-heading {
+  font-size: 50px;
+  color: #47d9a8;
+  animation: fadeIn 1.2s ease forwards;
+  animation-delay: 0.2s;
+}
+
+.contactus-description {
+  font-size: 18px;
+  color: #47d9a8;
+  margin-bottom: 30px;
+}
+
+.contactus-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contactus-input {
+  width: 80%;
+  max-width: 500px;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  color: #47d9a8;
+  border: 1px solid #47d9a8;
+  font-size: 16px;
+  background-color: rgba(71, 217, 168, 0.3);
+}
+
+.contactus-input::placeholder,
+.contactus-textarea::placeholder {
+  color: rgba(71, 217, 168, 0.7);
+}
+
+.contactus-input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.contactus-input:-webkit-autofill:focus {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+}
+
+.contactus-textarea {
+  width: 80%;
+  max-width: 500px;
+  height: 100px;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #47d9a8;
+  background-color: rgba(71, 217, 168, 0.3);
+  /* color: #cccccc; */
+  color: #47d9a8;
+  font-size: 16px;
+  resize: none;
+}
+
+.contactus-button {
+  background-color: #47d9a8;
+  color: white;
+  border: none;
+  margin: 20px 0px;
+  padding: 10px 50px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.contactus-button:hover {
+  background-color: #017f55;
+}
+
+@keyframes contactus-fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contactus-fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+@media (max-width: 1200px) {
+  .contactus-form-container {
+    margin-right: 300px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contactus-form-container {
+    margin-right: 0;
+  }
+
+  .contactus-heading {
+    font-size: 40px;
+  }
+
+  .contactus-description {
+    font-size: 16px;
+  }
+
+  .contactus-input,
+  .contactus-textarea {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .contactus-button {
+    padding: 10px 40px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contactus-container {
+    background-image: url("./img/contact-background-mobile.jpg");
+  }
+
+  .contactus-heading {
+    font-size: 35px;
+  }
+
+  .contactus-description {
+    font-size: 14px;
+  }
+
+  .contactus-input,
+  .contactus-textarea {
+    width: 90%;
+    max-width: 350px;
+  }
+
+  .contactus-button {
+    padding: 10px 30px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactus-heading {
+    font-size: 30px;
+  }
+
+  .contactus-description {
+    font-size: 12px;
+  }
+
+  .contactus-input,
+  .contactus-textarea {
+    width: 95%;
+    max-width: 300px;
+  }
+
+  .contactus-button {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+}

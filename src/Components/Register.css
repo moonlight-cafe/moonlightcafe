@@ -1,0 +1,109 @@
+.registration-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  border: 2px solid rgb(71, 217, 168);
+  box-shadow: 0 0 20px rgba(71, 217, 168, 0.5);
+  padding: 20px 50px;
+  border-radius: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeInZoom 0.6s ease forwards;
+}
+
+/* .registration-box {} */
+
+.registration-logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  user-select: none
+}
+
+.registration-form {
+  width: 100%;
+}
+
+.registration-form input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(71, 217, 168, 0.6);
+  border-radius: 8px;
+  color: #47d9a8;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.registration-form input::placeholder {
+  color: rgba(71, 217, 168, 0.7);
+  user-select: none
+}
+
+.registration-form input:focus {
+  border-color: #47d9a8;
+  background-color: rgba(71, 217, 168, 0.15);
+  color: #47d9a8;
+}
+
+.registration-form input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.registration-form input:-webkit-autofill:focus {
+  box-shadow: 0 0 0px 1000px rgba(71, 217, 168, 0.15) inset !important;
+  -webkit-text-fill-color: #47d9a8 !important;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 10px;
+  background-color: #47d9a8;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 9px;
+}
+
+.login-button:hover {
+  background-color: #017f55;
+}
+
+.login-link {
+  margin-top: 15px;
+  color: #47d9a8;
+  text-align: center;
+}
+
+.login-link a {
+  text-decoration: underline;
+  color: #47d9a8;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .registration-container {
+    flex-direction: column;
+    height: auto;
+    padding: 20px 30px;
+  }
+
+  /* .registration-box {} */
+
+  .registration-form input,
+  .login-button {
+    max-width: 100%;
+  }
+}

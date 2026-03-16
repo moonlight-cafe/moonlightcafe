@@ -1,0 +1,39 @@
+.splash-screen {
+  height: 100vh;
+  width: 100vw;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.8s ease-in-out;
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+}
+
+.splash-logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 30px;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.p-10 {
+  margin-top: 10px;
+  font-size: 1.2rem;
+}
+
+.green {
+  color: #2ecc71;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

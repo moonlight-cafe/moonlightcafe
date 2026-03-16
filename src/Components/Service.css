@@ -1,0 +1,163 @@
+.futuristic-service-container {
+    max-width: max-content;
+    margin: 20px 40px;
+    padding: 0 2rem;
+    position: relative;
+    text-align: center;
+    height: 83vh;
+    border: 1px solid #47d9a8;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(71, 217, 168, 0.6);
+    color: #d4f4e4;
+    animation: enterZoom 1s ease-out forwards, pulseGlow 3s ease-in-out infinite;
+    opacity: 0;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+    background: #47d9a8;
+    border-radius: 4px;
+}
+
+@keyframes enterZoom {
+    0% {
+        opacity: 0;
+        transform: scale(0.80) translateY(-150px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Infinite glowing pulse */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 25px rgba(71, 217, 168, 0.6);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(71, 217, 168, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 25px rgba(71, 217, 168, 0.6);
+    }
+}
+
+
+.futuristic-service-title {
+    font-size: 2.8rem;
+    margin-bottom: 2rem;
+    color: #47d9a8;
+    text-shadow: 0 0 10px rgba(71, 217, 168, 0.5);
+}
+
+.futuristic-service-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.futuristic-service-card {
+    flex: 1 1 calc(25% - 20px);
+    min-width: 250px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: white;
+    box-shadow: 0 0 20px rgba(71, 217, 168, 0.3);
+    transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.futuristic-service-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 0 25px rgba(71, 217, 168, 0.6);
+}
+
+.futuristic-service-card h2 {
+    font-size: 1.5rem;
+    color: #47d9a8;
+    margin-bottom: 0.5rem;
+}
+
+.futuristic-service-card p {
+    font-size: 1rem;
+    color: #e0e0e0;
+}
+
+.loading-service,
+.ServicesFetchError {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+    .futuristic-service-card {
+        flex: 1 1 calc(45% - 20px);
+    }
+
+    .futuristic-service-title {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .futuristic-service-card {
+        flex: 1 1 100%;
+    }
+
+    .futuristic-service-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .futuristic-service-card {
+        padding: 1.2rem;
+    }
+
+    .futuristic-service-card h2 {
+        font-size: 1.3rem;
+    }
+
+    .futuristic-service-container {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+
+    .futuristic-service-card p {
+        font-size: 0.95rem;
+    }
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
