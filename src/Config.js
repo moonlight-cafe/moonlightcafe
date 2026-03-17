@@ -1,9 +1,9 @@
 class Config {
         constructor() {
-                this.backendurl = "http://192.168.1.2:8080/moonlightcafe/v1/";
+                // this.backendurl = "http://192.168.1.2:8080/moonlightcafe/v1/";
                 this.accesskey = "Moonlight_Cafe_A4C9D2F1-5F21-A5E7-4C8B-C1D9B6F0A277"
                 this.issuer = "web"
-                // this.backendurl = "https://moonlightcafe-backend.onrender.com/moonlightcafe/v1/";
+                this.backendurl = "https://api-moonlightcafe.onrender.com/moonlightcafe/v1/";
                 this.upiId = "jainilam75-1@okhdfcbank"
                 this.moonlightcafelogo = "https://res.cloudinary.com/dqdv99ydb/image/upload/v1749141918/tempfolder/gmd4nf2stova0qct7h3o.png"
                 // this.moonlightcafelogosquare = "https://res.cloudinary.com/dqdv99ydb/image/upload/v1757447223/Monlight_Cafe_Green_qbzvfd.png"
