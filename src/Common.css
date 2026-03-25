@@ -1428,3 +1428,37 @@
 .actionbtn:hover {
         color: #34c49a !important;
 }
+
+
+.order-info {
+        margin-bottom: 20px;
+        padding: 15px 75px;
+        background: #1e1e1e99;
+        border-radius: 8px;
+        border: 1px solid rgba(71, 217, 168, 0.2);
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+}
+
+.order-info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: #fff;
+        white-space: nowrap;
+}
+
+.order-info-item strong {
+        color: #47d9a8;
+        font-weight: 600;
+}
+
+@media (max-width: 600px) {
+        .order-info {
+                flex-wrap: wrap;
+        }
+}

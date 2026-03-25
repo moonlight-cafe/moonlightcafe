@@ -151,17 +151,17 @@ export default function ViewCart() {
       <div className="view-cart-container">
         <h2 className="view-cart-h2">Your Cart</h2>
         <hr style={{ backgroundColor: "#47d9a8", height: "2px", border: "none" }} />
-        <div className="record-info mt-20">
-          <div className="record-info-item fs-18">
+        <div className="order-info mt-20">
+          <div className="order-info-item fs-18">
             <strong>Customer:</strong> {clientName}
           </div>
 
-          <div className="record-info-item fs-18">
+          <div className="order-info-item fs-18">
             <strong>Email:</strong> {clientEmail}
           </div>
 
-          <div className="record-info-item fs-18">
-            <strong>Table No:</strong>  {tableNo}
+          <div className="order-info-item fs-18">
+            <strong>Table No:</strong> {tableNo}
           </div>
         </div>
 
