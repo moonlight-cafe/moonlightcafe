@@ -1,11 +1,11 @@
-import { API as SharedAPI, Method as SharedMethod } from "../config/Init.js";
+import { API as SharedAPI, Method as SharedMethod, Config as SharedConfig } from "../config/Init.js";
 import React, { useEffect, useState } from "react";
 import "./Aboutus.css";
 import Navbar from "./Navbar";
 
-
 const Methods = SharedMethod;
 const APIs = SharedAPI;
+const Config = SharedConfig;
 
 const AboutPage = () => {
   const [aboutData, setAboutData] = useState([]);
@@ -13,7 +13,6 @@ const AboutPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    Methods.initAOS?.();
     const getData = async () => {
       setLoading(true);
       const result = await APIs.FetchAboutUsData();
@@ -27,123 +26,95 @@ const AboutPage = () => {
     getData();
   }, []);
 
-  // Hero section = first plain string body
-  const heroItem =
-    aboutData.find((s) => typeof s.body === "string") ||
-    aboutData[0] ||
-    null;
+  const heroItem = aboutData.find((s) => typeof s.body === "string") || aboutData[0] || null;
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="about-loading-container">
+          <div className="loader-wrapper">{Methods.showLoader()}</div>
+        </div>
+      </>
+    );
+  }
 
   return (
-    <>
+    <div className="about-page-wrapper user-not-select">
       <Navbar />
 
-      {loading ? (
-        <div className="full-height-page">
-          <div className="loader-wrap">{Methods.showLoader()}</div>
-        </div>
-      ) : error ? (
-        <div className="full-height-page">
-          <div className="error-wrap">
-            <div className="error-card">
-              <h3>Something went wrong</h3>
-              <p>{error}</p>
-              <button className="retry-btn" onClick={() => window.location.reload()}>
-                Retry
-              </button>
-            </div>
+      {/* HERO SECTION */}
+      <header className="about-hero">
+        <div className="about-hero-content">
+          <div className="about-badge">Our Story</div>
+          <h1 className="about-main-title">{heroItem?.title || "MoonLight Café"}</h1>
+          <p className="about-description">
+            {heroItem?.body || "A cozy corner for great coffee, warm vibes, and delicious treats — crafted with love since 2010."}
+          </p>
+          <div className="about-hero-btns">
+            <button className="about-primary-btn" onClick={() => document.getElementById('story-content').scrollIntoView({ behavior: 'smooth' })}>
+              Read Journey
+              <span className="material-symbols-outlined">expand_more</span>
+            </button>
+            <button className="about-outline-btn" onClick={() => window.location.href = "/view-menu"}>
+              Discover Flavors
+            </button>
           </div>
         </div>
-      ) : (
-        <main className="mlc-about-page">
+        <div className="about-hero-visual">
+          <img src={Config.moonlightcafelogosquare} alt="Logo" className="about-floating-logo" />
+        </div>
+      </header>
 
-          {/* ✅ HERO */}
-          <header
-            className="mlc-hero"
-            style={{
-              backgroundImage:
-                "linear-gradient(120deg, rgba(32,50,45,0.10), rgba(11,20,18,0.10)))",
-            }}
-            data-aos="fade-down"
-          >
-            <div className="mlc-hero-inner">
-              <h1 className="mlc-title">{heroItem?.title || "MoonLight Café"}</h1>
-              <p className="mlc-sub">
-                {heroItem?.body ||
-                  "A cozy corner for great coffee, warm vibes, and delicious treats — crafted with love since 2010."}
-              </p>
-
-              <div className="mlc-cta">
-                <button className="btn-primary" onClick={() => window.scrollTo({ top: 700, behavior: "smooth" })}>
-                  Our Story
-                </button>
-                <button className="btn-outline" onClick={() => window.location.href = "/view-menu"}>
-                  View Menu
-                </button>
-              </div>
-            </div>
-          </header>
-
-          <section className="mlc-content">
-            <div className="mlc-grid">
-              {aboutData.map((section, idx) => {
-                const isArray = Array.isArray(section.body);
-                if (isArray) {
-                  return (
-                    <article
-                      className={`mlc-card mlc-full`}
-                      key={idx}
-                    >
-                      <h2 className="section-title">{section.title}</h2>
-
-                      <div
-                        className="values-grid dynamic-grid"
-                      >
-                        {section.body.map((item, i) => (
-                          <div key={i} className="value-item" style={{
-                            textAlign: "center",
-                            alignItems: "center",
-                            width: "100%"
-                          }}>
-                            {item.icon && <div className="value-icon">{item.icon}</div>}
-                            <div className="value-text">
-                              <h4 className="mt-0">{item.title}</h4>
-                              {item.description && <p>{item.description}</p>}
-                            </div>
-                          </div>
-                        ))}
+      {/* CONTENT SECTIONS */}
+      <section id="story-content" className="about-sections-container">
+        {aboutData.filter(s => s !== heroItem).map((section, idx) => {
+          const isArray = Array.isArray(section.body);
+          return (
+            <div key={idx} className={`about-info-block ${idx % 2 === 0 ? 'row' : 'row-reverse'}`}>
+              <div className="info-text-side">
+                <span className="section-index">0{idx + 1}</span>
+                <h2 className="info-heading">{section.title}</h2>
+                {!isArray ? (
+                  <p className="info-body-text">{section.body}</p>
+                ) : (
+                  <div className="features-grid">
+                    {section.body.map((item, i) => (
+                      <div key={i} className="feature-item-pill">
+                        {item.icon && <span className="feature-icon">{item.icon}</span>}
+                        <div className="feature-meta">
+                          <h4>{item.title}</h4>
+                          <p>{item.description}</p>
+                        </div>
                       </div>
-                    </article>
-                  );
-                }
-                return (
-                  <article className="mlc-card mlc-full" key={idx}>
-                    <h2 className="section-title">{section.title}</h2>
-                    <p className="section-body">{section.body}</p>
-                  </article>
-                );
-              })}
-
-            </div>
-          </section>
-
-          {/* ✅ FOOTER CTA */}
-          <aside className="mlc-footer-cta" data-aos="fade-up">
-            <div className="cta-inner">
-              <h3>Drop by MoonLight Café today</h3>
-              <p>Warm seats, brighter vibes, and a cup that feels like home.</p>
-              <div className="mlc-cta">
-                <button className="btn-primary" onClick={() => window.location.href = "/reservation"}>
-                  Reserve a Table
-                </button>
-                <button className="btn-outline" onClick={() => window.location.href = "/contactus"}>
-                  Contact Us
-                </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="info-visual-side">
+                <div className="visual-glass-card">
+                  <span className="material-symbols-outlined luxury-icon">
+                    {idx % 2 === 0 ? 'history_edu' : 'verified_user'}
+                  </span>
+                </div>
               </div>
             </div>
-          </aside>
-        </main>
-      )}
-    </>
+          );
+        })}
+      </section>
+
+      {/* FOOTER CALLOUT */}
+      <section className="about-footer-callout">
+        <div className="callout-card">
+          <h2>Ready to taste the magic?</h2>
+          <p>Visit us today for an unforgettable experience.</p>
+          <div className="callout-actions">
+            <button className="about-primary-btn" onClick={() => window.location.href = "/reservation"}>Book a Table</button>
+            <button className="about-outline-btn" onClick={() => window.location.href = "/contactus"}>Talk to Us</button>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };
 

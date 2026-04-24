@@ -1,176 +1,159 @@
-.user-profile-card {
-        background-color: white;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        width: 100%;
-        max-width: 400px;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+.otp-page-wrapper {
+    min-height: 100vh;
+    background: #000;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    overflow-x: hidden;
 }
 
-.user-profile-title {
-        margin: 20px 0;
-        font-size: 24px;
-        font-weight: bold;
-        color: #47d9a8;
+.otp-content-area {
+    padding: 120px 5% 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
-.otp-instructions {
-        font-size: 16px;
-        color: #47d9a8;
-        margin-bottom: 20px;
+.otp-glass-card {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(71, 217, 168, 0.2);
+    border-radius: 40px;
+    padding: 50px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    animation: otpPop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.otp-input-container {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
+@keyframes otpPop {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.otp-digit-box {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-        text-align: center;
-        color: #47d9a8 !important;
-        border: 1px solid #47d9a833;
-        border-radius: 6px;
-        background-color: rgba(71, 217, 168, 0.3);
-        transition: border-color 0.3s;
+.otp-icon-shield {
+    width: 70px;
+    height: 70px;
+    background: rgba(71, 217, 168, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #47d9a8;
+    margin: 0 auto 25px;
 }
 
-.otp-digit-box::placeholder {
-        color: rgba(71, 217, 168, 0.7);
+.otp-icon-shield span { font-size: 35px; }
+
+.otp-header-zone h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
 }
 
-.otp-digit-box.empty {
-        color: rgba(71, 217, 168, 0.7);
-        background-color: rgba(71, 217, 168, 0.3);
+.otp-header-zone p {
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 40px;
 }
 
+.otp-header-zone p span { color: #fff; font-weight: 600; }
 
-.otp-button-group {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 15px;
+/* INPUT ROW */
+.otp-input-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
 }
 
-
-.otp-digit-box:focus {
-        border-color: #47d9a8;
-        background-color: rgba(71, 217, 168, 0.15);
-        color: #47d9a8;
+.otp-box-unit {
+    width: 100%;
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    outline: none;
+    transition: 0.3s;
 }
 
-.error-message {
-        color: red;
-        font-size: 14px;
-        margin-top: 10px;
+.otp-box-unit:focus, .otp-box-unit.filled {
+    border-color: #47d9a8;
+    background: rgba(71, 217, 168, 0.05);
+    box-shadow: 0 0 15px rgba(71, 217, 168, 0.2);
 }
 
-.success-message {
-        color: green;
-        font-size: 14px;
-        margin-top: 10px;
+/* ACTIONS */
+.otp-actions-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.otp-btn {
-        width: 100%;
-        margin-top: 10px;
-        background-color: #47d9a8;
-        color: white !important;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        cursor: pointer;
-        padding: 9px;
-        transition: background-color 0.3s;
+.otp-verify-btn {
+    width: 100%;
+    background: #47d9a8;
+    color: #000;
+    border: none;
+    padding: 16px;
+    border-radius: 100px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.otp-btn:hover {
-        background-color: #017f55;
-        color: #47d9a8 !important;
+.otp-verify-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(71, 217, 168, 0.3);
 }
 
-.change-password-link {
-        color: #007bff;
-        font-size: 14px;
-        margin-top: 20px;
-        cursor: pointer;
+.resend-info {
+    font-size: 0.9rem;
+    color: #888;
 }
 
-/* Ensure container takes full viewport height */
-.user-profile-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        min-height: 100vh;
+.resend-trigger {
+    background: transparent;
+    border: none;
+    color: #47d9a8;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-        .user-profile-card {
-                padding: 25px 20px;
-                max-width: 100%;
-        }
+.resend-info span { color: #fff; font-weight: 700; }
 
-        .otp-digit-box {
-                width: 45px;
-                height: 45px;
-                font-size: 22px;
-        }
-
-        .otp-input-container {
-                gap: 8px;
-                flex-wrap: wrap;
-                justify-content: center;
-        }
-
-        .otp-btn {
-                font-size: 15px;
-                padding: 8px;
-        }
-
-        .user-profile-title {
-                font-size: 22px;
-        }
-
-        .otp-instructions {
-                font-size: 15px;
-        }
+.otp-back-link {
+    background: transparent;
+    border: none;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
 }
 
+.otp-back-link:hover { color: #fff; }
+
+/* RESPONSIVE */
 @media (max-width: 480px) {
-        .user-profile-card {
-                padding: 20px 15px;
-        }
-
-        .otp-digit-box {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-        }
-
-        .otp-btn {
-                font-size: 14px;
-                padding: 8px;
-        }
-
-        .otp-input-container {
-                gap: 6px;
-        }
-
-        .user-profile-title {
-                font-size: 20px;
-        }
-
-        .otp-instructions {
-                font-size: 14px;
-        }
-
-        .change-password-link {
-                font-size: 13px;
-        }
+    .otp-glass-card { padding: 40px 25px; border-radius: 30px; }
+    .otp-header-zone h2 { font-size: 1.5rem; }
+    .otp-input-row { gap: 8px; }
+    .otp-box-unit { font-size: 1.2rem; }
 }

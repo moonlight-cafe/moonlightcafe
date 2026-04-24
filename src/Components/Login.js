@@ -9,7 +9,8 @@ import { signInWithPopup } from "firebase/auth";
 const method = SharedMethod;
 const Config = SharedConfig;
 const BackendAPIs = SharedAPI;
-const cafelogo = Config.moonlightcafelogo;
+const cafelogo = Config.moonlightcafetext;
+const cafelogosquare = Config.moonlightcafelogosquare;
 const googleLogo = Config.googleLogo;
 
 function Login() {
@@ -20,7 +21,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [popup, setPopup] = useState({ message: "", type: "", visible: false });
   const popupTimer = useRef(null);
-  const [name, setName] = useState("")
+  const [name, setName] = useState("");
   const navigate = useNavigate();
 
   const showPopup = (message, type = "error") => {
@@ -60,7 +61,6 @@ function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // ✅ Use Google email, not state email
       const accessResp = await BackendAPIs.GetAccessToken(user.email);
       if (accessResp.status !== 200) {
         showPopup(accessResp.message || "Access token failed");
@@ -74,7 +74,6 @@ function Login() {
       );
 
       if (response.status === 200) {
-        // ✅ Use Google display name
         handleLoginSuccess(user.displayName || "User");
       } else {
         showPopup(response.message || "Google login failed");
@@ -92,8 +91,7 @@ function Login() {
     setSplashVisible(true);
     setPopup({ message: "", type: "", visible: false });
 
-    const redirectPath =
-      localStorage.getItem("redirectAfterLogin") || "/";
+    const redirectPath = localStorage.getItem("redirectAfterLogin") || "/home";
     localStorage.removeItem("redirectAfterLogin");
 
     setTimeout(() => {
@@ -128,90 +126,93 @@ function Login() {
   return (
     <>
       {splashVisible ? (
-        <div className="splash-screen">
-          <img src={cafelogo} alt="Logo" className="splash-logo" />
-          {<p className="user-welcome p-10">Hello, {name || "User123456"}</p>}
-          <p className="welcome-message green p-10">Welcome back to Moonlight Cafe!</p>
-          <p className="designer-message green p-10">Developed by Jainil and Team.</p>
+        <div className="splash-screen user-not-select">
+          <img src={cafelogosquare} alt="Logo" className="splash-logo" />
+          <p className="user-welcome">Hello, {name || "Guest"}</p>
+          <p className="welcome-message green">Welcome back to Moonlight Cafe!</p>
+          <div className="loading-bar-container">
+            <div className="loading-bar-progress"></div>
+          </div>
+          <p className="designer-message">Developed by Jainil and Team.</p>
         </div>
       ) : (
-        <>
-          {/* <Navbar /> */}
-          <div className="common-box-comtainer">
-            <div className="common-box">
-              <img
-                src={cafelogo}
-                alt="Moonlight Cafe"
-                style={{ width: "200px", marginBottom: "40px", userSelect: "none" }}
-              />
+        <div className="auth-outer-wrapper user-not-select">
+          <div className="auth-left-panel">
+            <div className="auth-left-content">
+              <h1 className="auth-welcome-title">Welcome To</h1>
+              <div className="auth-logo-stack">
+                <img src={cafelogosquare} alt="Logo" className="auth-logo-sq" />
+                <img src={cafelogo} alt="Moonlight Cafe" className="auth-logo-tx" />
+              </div>
+              <p className="auth-left-tagline">
+                Experience the magic of handcrafted brews and artisanal delights.
+              </p>
+            </div>
+          </div>
 
-              <form onSubmit={handleLogin}>
-                <div className="loginform-group">
-                  <input
-                    type="text"
-                    placeholder="Email or Mobile Number"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    style={{ userSelect: "none" }}
-                  />
-                </div>
+          <div className="auth-right-panel">
+            <div className="auth-form-card">
+              <div className="auth-header">
+                <h2>Login</h2>
+                <p>Welcome back! Please enter your details.</p>
+              </div>
 
-                <div className="loginform-group password-group">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    style={{ userSelect: "none" }}
-                  />
-                  <span
-                    className="material-symbols-outlined visibility-icon"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    style={{ cursor: "pointer", marginLeft: "10px", userSelect: "none" }}
-                  >
-                    {showPassword ? "visibility_off" : "visibility"}
-                  </span>
-                </div>
-
-                <div className="loginform-group">
-                  <div className="forgot-link-wrapper">
-                    <div
-                      className="forgot-password-text"
-                      onClick={handleForgotPassword}
-                      style={{ cursor: "pointer" }}
-                    >
-                      Forgot password?
-                    </div>
+              <form onSubmit={handleLogin} className="auth-form">
+                <div className="auth-input-group">
+                  <label className="main-color fs-18">Email</label>
+                  <div className="input-wrapper">
+                    <span className="material-symbols-outlined input-icon">mail</span>
+                    <input
+                      type="text"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
 
-                <button className="login-button" type="submit" disabled={loading}>
-                  {loading ? "Logging in..." : "Login"}
+                <div className="auth-input-group">
+                  <label className="main-color fs-18">Password</label>
+                  <div className="input-wrapper">
+                    <span className="material-symbols-outlined input-icon">lock</span>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <span
+                      className="material-symbols-outlined visibility-trigger"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? "visibility_off" : "visibility"}
+                    </span>
+                  </div>
+                  <div className="auth-extra-actions">
+                    <span className="forgot-trigger fs-16" onClick={handleForgotPassword}>
+                      Forgot Password?
+                    </span>
+                  </div>
+                </div>
+
+                <button className="main-btn fs-18" type="submit" disabled={loading}>
+                  {loading ? (
+                    <span className="btn-loader"></span>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </form>
 
-              {/* ✅ Google Login Button */}
-              <button className="google-login-button" onClick={handleGoogleLogin}>
-                <img
-                  src={googleLogo}
-                  alt="Google"
-                  style={{ width: "20px", marginRight: "10px" }}
-                />
-                Continue with Google
-              </button>
-
-              <p className="register-link">
-                New to Moonlight Cafe? <a href="/register">Click here to register</a>
+              <p className="auth-switch-link">
+                New to Moonlight Cafe? <a href="/register">Create an account</a>
               </p>
             </div>
-
-            {method.renderPopup(popup, () =>
-              method.hidePopup(setPopup, popupTimer)
-            )}
           </div>
-        </>
+          {method.renderPopup(popup, () => method.hidePopup(setPopup, popupTimer))}
+        </div>
       )}
     </>
   );

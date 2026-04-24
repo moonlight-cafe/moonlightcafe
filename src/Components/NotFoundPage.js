@@ -1,36 +1,56 @@
 import { Config as SharedConfig } from "../config/Init.js";
-// Components/NotFoundPage.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './NotFoundPage.css';
+import Navbar from "./Navbar.js";
 
 const Config = SharedConfig;
-const notfoundimg = Config.notfoundimg;
 
 const NotFoundPage = () => {
-        return (
-                <div className="notfound-wrapper">
-                        <div className="notfound-box">
-                                <div className='notfoundiimg'>
-                                        <img
-                                                src={notfoundimg}
-                                                alt="404 Not Found"
-                                                className="notfound-image"
-                                        />
-                                </div>
-                                <div className='notfoundtext'>
+    const navigate = useNavigate();
 
-                                        <h2 className="notfound-heading">Oops! Page Not Found</h2>
-                                        <p className="notfound-text">
-                                                The page you’re looking for might have been removed, renamed, or it never existed.
-                                        </p>
-                                        <Link to="/" className="notfound-home-btn">
-                                                ⬅ Back to Home
-                                        </Link>
-                                </div>
+    return (
+        <div className="notfound-page-container user-not-select">
+            <Navbar />
+
+            <div className="notfound-content">
+                <div className="notfound-glass-card">
+                    <div className="notfound-visual">
+                        <h1 className="notfound-404-glow">404</h1>
+                        <div className="notfound-portal-ring"></div>
+                        <img
+                            src={Config.moonlightcafelogosquare}
+                            alt="Moonlight Cafe"
+                            className="notfound-logo-float"
+                        />
+                    </div>
+
+                    <div className="notfound-text-zone">
+                        <span className="notfound-tag">Lost in the Shadows</span>
+                        <h2 className="notfound-title">Page Not Found</h2>
+                        <p className="notfound-desc">
+                            The culinary masterpiece you're looking for seems to have vanished into the moonlight.
+                            Let's get you back to the main menu.
+                        </p>
+
+                        <div className="notfound-actions">
+                            <button className="main-btn" onClick={() => navigate('/home')}>
+                                <span className="material-symbols-outlined">home</span>
+                                Return Home
+                            </button>
+                            <button className="main-btn" onClick={() => navigate(-1)}>
+                                <span className="material-symbols-outlined">arrow_back</span>
+                                Go Back
+                            </button>
                         </div>
+                    </div>
                 </div>
-        );
+            </div>
+
+            <div className="notfound-decoration-orb orb-1"></div>
+            <div className="notfound-decoration-orb orb-2"></div>
+        </div>
+    );
 };
 
 export default NotFoundPage;
