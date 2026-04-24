@@ -18,6 +18,9 @@ export default function ViewMenu() {
   const [loading, setLoading] = useState(true);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [popup, setPopup] = useState({ message: "", type: "", visible: false });
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const popupTimer = useRef(null);
   const navigate = useNavigate();
 
@@ -45,7 +48,27 @@ export default function ViewMenu() {
       }
     };
     fetchData();
-  }, []);
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 200) {
+        setHeaderVisible(false); // Scroll Down - Hide
+      } else {
+        setHeaderVisible(true); // Scroll Up - Show
+      }
+      if (currentScrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const handleToggleFavorite = async (e, item) => {
     e.stopPropagation();
@@ -68,6 +91,10 @@ export default function ViewMenu() {
     } catch (err) {
       Methods.showPopup(setPopup, popupTimer, "Action failed", "error");
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const filteredItems = foodItems.filter(item => {
@@ -94,7 +121,7 @@ export default function ViewMenu() {
         <h1>Our Menu</h1>
       </header>
 
-      <div className="nav-sticky-capsule">
+      <div className={`nav-sticky-capsule ${headerVisible ? "" : "hidden"}`}>
         <div className="search-field-modern" data-aos="fade-up">
           <span className="material-symbols-outlined">search</span>
           <input
@@ -165,6 +192,14 @@ export default function ViewMenu() {
           </div>
         )}
       </main>
+
+      <button
+        className={`scroll-top-btn ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+      >
+        <span className="material-symbols-outlined">keyboard_arrow_up</span>
+      </button>
     </div>
   );
 }

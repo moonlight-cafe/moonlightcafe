@@ -23,6 +23,7 @@ export default function UserOrderMenu() {
   const [popup, setPopup] = useState({ message: "", type: "", visible: false });
   const [headerVisible, setHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [animatingItemId, setAnimatingItemId] = useState(null);
   const popupTimer = useRef(null);
   const navigate = useNavigate();
@@ -39,6 +40,12 @@ export default function UserOrderMenu() {
       } else {
         setHeaderVisible(true); // Scroll Up - Show
       }
+      if (currentScrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
       setLastScrollY(currentScrollY);
     };
 
@@ -165,6 +172,10 @@ export default function UserOrderMenu() {
 
   const returnHome = () => {
     navigate("/home");
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleViewCart = () => {
@@ -309,6 +320,14 @@ export default function UserOrderMenu() {
           <span className="fab-text">View Cart</span>
         </button>
       </div>
+
+      <button
+        className={`scroll-top-btn ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+      >
+        <span className="material-symbols-outlined">keyboard_arrow_up</span>
+      </button>
     </div>
   );
 }
