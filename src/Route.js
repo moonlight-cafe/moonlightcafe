@@ -1,79 +1,105 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { lazy, useEffect } from "react";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { Method } from "./config/Init.js";
 
-import Home from './Components/Home';
-import Service from './Components/Service';
-import ViewMenu from './Components/ViewMenu';
-import AboutUs from './Components/Aboutus';
-import ContectUs from './Components/ContectUs';
+const Home = lazy(() => import("./Components/Home"));
+const Service = lazy(() => import("./Components/Service"));
+const ViewMenu = lazy(() => import("./Components/ViewMenu"));
+const AboutUs = lazy(() => import("./Components/Aboutus"));
+const ContectUs = lazy(() => import("./Components/ContectUs"));
+const Login = lazy(() => import("./Components/Login"));
+const VerifyOTP = lazy(() => import("./Components/VerifyOTP"));
+const ResetPassword = lazy(() => import("./Components/ResetPassword"));
+const Register = lazy(() => import("./Components/Register"));
+const UserProfile = lazy(() => import("./Components/UserProfile"));
+const LogOut = lazy(() => import("./Components/LogOut"));
+const DineinSelectTable = lazy(() => import("./Components/DineinSelectTable"));
+const UserOrderMenu = lazy(() => import("./Components/UserOrderMenu"));
+const ViewCart = lazy(() => import("./Components/ViewCart"));
+const OrderHistory = lazy(() => import("./Components/OrderHistory"));
+const DineInBilling = lazy(() => import("./Components/DineInBilling"));
+const TakeAwayOrderMenu = lazy(() => import("./Components/TakeAwayOrderMenu"));
+const TakeAwayViewCart = lazy(() => import("./Components/TakeAwayViewCart"));
+const TakeAwayOrderHistory = lazy(() => import("./Components/TakeAwayOrderHistory"));
+const TakeAwayBilling = lazy(() => import("./Components/TakeAwayBilling"));
+const Thakyou = lazy(() => import("./Components/Thakyou"));
+const OrderDetails = lazy(() => import("./Components/OrderDetails"));
+const Delevery = lazy(() => import("./Components/Delevery"));
+const Reservation = lazy(() => import("./Components/Reservation"));
+const NotFoundPage = lazy(() => import("./Components/NotFoundPage"));
 
-import Login from './Components/Login';
-import VerifyOTP from './Components/VerifyOTP';
-import ResetPassword from './Components/ResetPassword';
-import ChangePassword from './Components/ChangePassword';
-import Register from './Components/Register';
-import UserProfile from './Components/UserProfile';
-import LogOut from './Components/LogOut';
+const buildRequestedPath = (location) =>
+        `${location.pathname || "/"}${location.search || ""}${location.hash || ""}`;
 
-import DineinSelectTable from './Components/DineinSelectTable';
-import UserOrderMenu from './Components/UserOrderMenu';
-import ViewCart from './Components/ViewCart';
-import OrderHistory from './Components/OrderHistory';
-import DineInBilling from './Components/DineInBilling';
+function LoginRedirect() {
+        const location = useLocation();
 
-import TakeAwayOrderMenu from './Components/TakeAwayOrderMenu';
-import TakeAwayViewCart from './Components/TakeAwayViewCart';
-import TakeAwayOrderHistory from './Components/TakeAwayOrderHistory';
-import TakeAwayBilling from './Components/TakeAwayBilling';
+        useEffect(() => {
+                Method.rememberRedirectAfterLogin(buildRequestedPath(location));
+        }, [location]);
 
-import Thakyou from './Components/Thakyou';
-import Delevery from './Components/Delevery';
-import Reservation from './Components/Reservation';
+        return <Navigate to="/login" replace />;
+}
 
-import NotFoundPage from './Components/NotFoundPage';
+function GuestOnlyRoute() {
+        const isLoggedIn = Method.checkLoginStatus().status === 200;
+        return isLoggedIn ? <Navigate to={Method.getRedirectAfterLogin("/home")} replace /> : <Outlet />;
+}
+
+function CustomerProtectedRoute() {
+        const isLoggedIn = Method.checkLoginStatus().status === 200;
+        return isLoggedIn ? <Outlet /> : <LoginRedirect />;
+}
+
+function TableProtectedRoute() {
+        const isLoggedIn = Method.checkLoginStatus().status === 200;
+        if (!isLoggedIn) return <LoginRedirect />;
+
+        const hasSelectedTable = Method.checkSelectedTable().status === 200;
+        return hasSelectedTable ? <Outlet /> : <Navigate to="/dine-in/select-table" replace />;
+}
 
 const AppRoutes = () => {
         return (
                 <Routes>
-
-                        {/* HOME */}
                         <Route path="/" element={<Home />} />
                         <Route path="/home" element={<Home />} />
                         <Route path="/services" element={<Service />} />
                         <Route path="/aboutus" element={<AboutUs />} />
                         <Route path="/contactus" element={<ContectUs />} />
                         <Route path="/view-menu" element={<ViewMenu />} />
-
-                        {/* AUTH */}
-                        <Route path="/login" element={<Login />} />
                         <Route path="/verify/otp" element={<VerifyOTP />} />
                         <Route path="/reset/password" element={<ResetPassword />} />
-                        <Route path="/change/password" element={<ChangePassword />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/user/profile/:_id" element={<UserProfile />} />
-                        <Route path="/user/logout/:_id" element={<LogOut />} />
-
-                        {/* DINE IN */}
-                        <Route path="/dine-in/select-table" element={<DineinSelectTable />} />
-                        <Route path="/dine-in/menu/:tableno" element={<UserOrderMenu />} />
-                        <Route path="/view-cart/:tableno" element={<ViewCart />} />
-                        <Route path="/order/history/:tableno" element={<OrderHistory />} />
-                        <Route path="/dine-in/billing/:orderid" element={<DineInBilling />} />
-
-                        {/* TAKE AWAY */}
-                        <Route path="/take-away/menu/:randomString" element={<TakeAwayOrderMenu />} />
-                        <Route path="/take-away/view-cart/:randomString" element={<TakeAwayViewCart />} />
-                        <Route path="/take-away/order/history/:randomString" element={<TakeAwayOrderHistory />} />
-                        <Route path="/take-away/billing/:orderid" element={<TakeAwayBilling />} />
-
-                        {/* ORDER */}
-                        <Route path="/thank_you/:orderid" element={<Thakyou />} />
                         <Route path="/delevery" element={<Delevery />} />
                         <Route path="/reservation" element={<Reservation />} />
 
-                        {/* 404 */}
-                        <Route path="*" element={<NotFoundPage />} />
+                        <Route element={<GuestOnlyRoute />}>
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/register" element={<Register />} />
+                        </Route>
 
+                        <Route element={<CustomerProtectedRoute />}>
+                                <Route path="/user/profile/:_id" element={<UserProfile />} />
+                                <Route path="/user/logout/:_id" element={<LogOut />} />
+                                <Route path="/dine-in/select-table" element={<DineinSelectTable />} />
+                                <Route path="/take-away/menu/:randomString" element={<TakeAwayOrderMenu />} />
+                                <Route path="/take-away/view-cart/:randomString" element={<TakeAwayViewCart />} />
+                                <Route path="/take-away/order/summery/:randomString" element={<TakeAwayOrderHistory />} />
+                                <Route path="/take-away/order/history/:randomString" element={<TakeAwayOrderHistory />} />
+                                <Route path="/take-away/billing/:orderid" element={<TakeAwayBilling />} />
+                                <Route path="/dine-in/billing/:orderid" element={<DineInBilling />} />
+                                <Route path="/orderdetails/:orderid" element={<OrderDetails />} />
+                                <Route path="/thank_you/:orderid" element={<Thakyou />} />
+                        </Route>
+
+                        <Route element={<TableProtectedRoute />}>
+                                <Route path="/dine-in/menu/:tableno" element={<UserOrderMenu />} />
+                                <Route path="/view-cart/:tableno" element={<ViewCart />} />
+                                <Route path="/order/summery/:tableno" element={<OrderHistory />} />
+                                <Route path="/order/history/:tableno" element={<OrderHistory />} />
+                        </Route>
+
+                        <Route path="*" element={<NotFoundPage />} />
                 </Routes>
         );
 };

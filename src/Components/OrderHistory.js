@@ -1,7 +1,10 @@
 import { API as SharedAPI, Method as SharedMethod, Config as SharedConfig } from "../config/Init.js";
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import './OrderHistory.css';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './Navbar.js';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import './OrderHistory.css';
 
 const Methods = SharedMethod;
 const Config = SharedConfig;
@@ -9,19 +12,17 @@ const BackendAPIs = SharedAPI;
 
 const OrderHistory = () => {
         const navigate = useNavigate();
+        const navbarRef = useRef(null);
         const customerdata = Methods.checkLoginStatus();
         const tabledata = Methods.checkSelectedTable();
         const [orders, setOrders] = useState([]);
-        const [previousOrders, setPreviousOrders] = useState([]);
         const [openAccordion, setOpenAccordion] = useState(null);
-        const [sidebarAccordion, setSidebarAccordion] = useState(null);
         const [modalVisible, setModalVisible] = useState(false);
         const [includeTip, setIncludeTip] = useState(false);
         const [customTip, setCustomTip] = useState("");
-        const [isSidebarOpen, setIsSidebarOpen] = useState(false);
         const [popup, setPopup] = useState({ message: "", type: "", visible: false });
         const popupTimer = useRef(null);
-        const [loadingPastOrders, setLoadingPastOrders] = useState(false);
+        const [loadingOrders, setLoadingOrders] = useState(true);
         const [isAnimatingOut, setIsAnimatingOut] = useState(false);
 
         const showPopup = (message, type = "error") => {
@@ -29,6 +30,7 @@ const OrderHistory = () => {
         };
 
         useEffect(() => {
+                AOS.init({ duration: 800, once: true, mirror: false, disable: false });
                 if (customerdata.status !== 200) {
                         localStorage.setItem("redirectAfterLogin", window.location.pathname);
                         navigate("/login");
@@ -43,40 +45,26 @@ const OrderHistory = () => {
         useEffect(() => {
                 const fetchOrderHistory = async () => {
                         try {
-                                const customerdata = Methods.getCookie('customerdata');
-                                const response = await BackendAPIs.ViewCart(customerdata._id, 1)
+                                setLoadingOrders(true);
+                                const customer = Methods.getCookie('customerdata');
+                                const response = await BackendAPIs.ViewCart(customer._id, 1);
                                 setOrders(response.data || []);
                         } catch (error) {
                                 console.error("Error fetching order history:", error);
+                        } finally {
+                                setLoadingOrders(false);
                         }
                 };
 
                 fetchOrderHistory();
         }, []);
 
-        useEffect(() => {
-                const handleBeforeUnload = (e) => {
-                        // Standard way to show confirmation dialog
-                        e.preventDefault();
-                        e.returnValue = ''; // Required for Chrome
-                };
-
-                window.addEventListener('beforeunload', handleBeforeUnload);
-
-                return () => {
-                        window.removeEventListener('beforeunload', handleBeforeUnload);
-                };
-        }, []);
-
         const toggleAccordion = (index) => {
                 setOpenAccordion(openAccordion === index ? null : index);
         };
 
-        const toggleSidebarAccordion = (index) => {
-                setSidebarAccordion(sidebarAccordion === index ? null : index);
-        };
-
         const handleAddMoreItems = () => navigate(`/dine-in/menu/${tabledata.data.id}`);
+        const handleReturnToCart = () => navigate(`/view-cart/${tabledata.data.id}`);
 
         const handleProceedToBilling = () => {
                 const tipValue = Number(customTip || 0);
@@ -95,7 +83,7 @@ const OrderHistory = () => {
                                 tableno: tabledata.data.table_no,
                                 totalamount: grandTotal.toFixed(2),
                                 includetip: includeTip ? 1 : 0,
-                                tipamount: includeTip ? Number(customTip || 0) : 0,
+                                tipamount: tipAmount,
                                 servicetype: 1
                         };
                         const response = await BackendAPIs.DiningConfirmBilling(payload);
@@ -134,247 +122,300 @@ const OrderHistory = () => {
                 }, 300);
         };
 
-        const renderOrderRow = (item, i) => (
-                <tr key={i}>
-                        <td>
-                                <img src={item.imageurl} alt={item.foodname} className="food-avatar" />
-                        </td>
-                        <td>{item.foodname}</td>
-                        <td>{item.quantity}</td>
-                        <td>₹{item.price || "N/A"}</td>
-                </tr>
+        const hasOrders = orders.some(order => Array.isArray(order.data) && order.data.length > 0);
+
+
+        const activeOrderCount = useMemo(() =>
+                orders.filter(order => Array.isArray(order.data) && order.data.length > 0).length,
+                [orders]
         );
 
-        const hasOrders = orders.some(order => Array.isArray(order.data) && order.data.length > 0);
+        const totalOrderedItems = useMemo(() =>
+                orders.reduce((acc, order) => (
+                        acc + (Array.isArray(order.data)
+                                ? order.data.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
+                                : 0)
+                ), 0),
+                [orders]
+        );
+
+        const tipAmount = useMemo(() =>
+                includeTip ? Number(customTip || 0) : 0,
+                [includeTip, customTip]
+        );
 
         const finalTotalAmount = useMemo(() =>
                 orders.reduce((acc, order) => acc + Number(order.totalamount), 0),
                 [orders]
         );
 
-        const grandTotal = useMemo(() =>
-                finalTotalAmount + (includeTip ? Number(customTip || 0) : 0),
-                [finalTotalAmount, includeTip, customTip]
+        const gstPercent = useMemo(() =>
+                Config.allowtax === 1 ? Number(Config.taxdetails?.dineintax || 0) : 0,
+                []
         );
 
-        const fetchPreviousOrders = async () => {
-                try {
-                        setLoadingPastOrders(true);
-                        Methods.toggleSidebar(setIsSidebarOpen, true);
-                        const response = await BackendAPIs.FetchPastOrders({
-                                customerid: customerdata.data._id,
-                                servicetype: [1]
-                        });
+        const gstAmount = useMemo(() =>
+                Config.allowtax === 1 ? (finalTotalAmount * gstPercent) / 100 : 0,
+                [finalTotalAmount, gstPercent]
+        );
 
-                        setPreviousOrders(response.data || []);
-                } catch (error) {
-                        console.error('Error fetching previous orders:', error);
-                } finally {
-                        setLoadingPastOrders(false);
+        const grandTotal = useMemo(() =>
+                finalTotalAmount + gstAmount + tipAmount,
+                [finalTotalAmount, gstAmount, tipAmount]
+        );
+
+        const handleOpenPastOrders = () => {
+                if (navbarRef.current) {
+                        navbarRef.current.openOrders();
                 }
         };
 
-        const renderOldOrders = () => (
-                <>
-                        <h2 className="sidebar-heading">Previous Orders</h2>
-                        {loadingPastOrders ? (
-                                Methods.showLoader()
-                        ) : previousOrders.length === 0 ? (
-                                <>
-                                        <div className="notfoundiimg">
-                                                <img src={Config.ordernotfoundimg} alt="No Orders Found" className="notfound-image" />
-                                        </div>
-                                        <p className="no-orders-text">No previous orders found.</p>
-                                </>
-                        ) : (
-                                previousOrders.map((order, index) => (
-                                        <div key={index} className="old-custom-accordion">
-                                                <div className="accordion-header" onClick={() => toggleSidebarAccordion(index)}>
-                                                        <span className="order-placed-text">{Methods.formatReadableDate(order.createdAt)}</span>
-                                                        <span className={`plus ${sidebarAccordion === index ? 'open' : ''}`}>
-                                                                <i className="fa-solid fa-plus"></i>
-                                                        </span>
-                                                </div>
-
-                                                <div className={`accordion-body ${sidebarAccordion === index ? 'open' : ''}`}>
-                                                        <div className="modal-table-container">
-                                                                <div className="modal-table-wrapper">
-                                                                        <table className="modal-table">
-                                                                                <thead>
-                                                                                        <tr>
-                                                                                                <th>#</th>
-                                                                                                <th>Item</th>
-                                                                                                <th>Image</th>
-                                                                                                <th>Qty</th>
-                                                                                                <th>Price</th>
-                                                                                        </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                        {order.data.map((item, i) => (
-                                                                                                <tr key={i}>
-                                                                                                        <td>{i + 1}</td>
-                                                                                                        <td>{item.foodname}</td>
-                                                                                                        <td>
-                                                                                                                <img
-                                                                                                                        src={item.imageurl}
-                                                                                                                        alt={item.foodname}
-                                                                                                                        className="food-img"
-                                                                                                                />
-                                                                                                        </td>
-                                                                                                        <td>{item.quantity}</td>
-                                                                                                        <td>₹{item.price}</td>
-                                                                                                </tr>
-                                                                                        ))}
-                                                                                </tbody>
-                                                                        </table>
-                                                                </div>
-                                                        </div>
-                                                        <div className="order-summary-details">
-                                                                <p>Tip: {order.includetip ? `₹${order.tipamount}` : 'Not included'}</p>
-                                                                <p>Total: ₹{order.totalamount}</p>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                ))
-                        )}
-                </>
-        );
+        const tableNo = tabledata?.data?.table_no || "N/A";
+        const clientName = customerdata?.data?.name || "Guest";
+        const clientEmail = customerdata?.data?.email || "";
 
         return (
-                <>
-                        <div className="order-history-wrapper">
-                                <h1 className='order-history-heading'>Order History</h1>
+                <div className="history-page-wrapper user-not-select">
+                        <Navbar ref={navbarRef} />
+                        {Methods.renderPopup(popup, () => Methods.hidePopup(setPopup, popupTimer))}
 
-                                <div className="final-total-amount user-not-select">
-                                        {Methods.tooltip(
-                                                "Previous Orders",
-                                                <span className="material-symbols-outlined search-history-icon" onClick={fetchPreviousOrders}>search_activity</span>,
-                                                "top"
-                                        )}
+                        <header className="history-header-v2" data-aos="fade-down">
+                                <div className="history-header-main">
+                                        <span className="material-symbols-outlined history-header-icon">receipt_long</span>
+                                        <div className="history-header-copy">
+                                                <span className="history-header-tag">Dine-In History</span>
+                                                <h1>Order Summary</h1>
+                                        </div>
                                 </div>
 
-                                {hasOrders ? (
-                                        <>
-                                                {orders.map((order, index) => (
-                                                        <div key={order._id} className="custom-accordion">
-                                                                <div className="accordion-header" onClick={() => toggleAccordion(index)}>
-                                                                        <span className="order-placed-text">{Methods.formatReadableDate(order.createdAt)}</span>
-                                                                        <div className={`order-placed-text plus ${openAccordion === index ? "open" : ""}`}>
-                                                                                <i className={`fa-solid ${openAccordion === index ? 'fa-plus' : 'fa-plus'}`}></i>
-                                                                        </div>
+                                <div className="history-context-board">
+                                        <div className="history-board-intro">
+                                                <span className="material-symbols-outlined">room_service</span>
+                                                <div>
+                                                        <p>Track everything already sent from your table.</p>
+                                                        <small>Review active orders, add more dishes, or move to billing when you're ready.</small>
+                                                </div>
+                                        </div>
+
+                                        <div className="history-board-grid">
+                                                <div className="history-detail-card">
+                                                        <span className="history-detail-label">Serving Table</span>
+                                                        <div className="history-detail-value">
+                                                                <span className="material-symbols-outlined">table_restaurant</span>
+                                                                <strong>{tableNo}</strong>
+                                                        </div>
+                                                </div>
+
+                                                <div className="history-detail-card">
+                                                        <span className="history-detail-label">Guest Name</span>
+                                                        <div className="history-detail-value">
+                                                                <span className="material-symbols-outlined">person</span>
+                                                                <strong>{clientName}</strong>
+                                                        </div>
+                                                </div>
+
+                                                {clientEmail ? (
+                                                        <div className="history-detail-card">
+                                                                <span className="history-detail-label">Login Email</span>
+                                                                <div className="history-detail-value">
+                                                                        <span className="material-symbols-outlined">alternate_email</span>
+                                                                        <strong>{clientEmail}</strong>
                                                                 </div>
-                                                                <div className={`accordion-body ${openAccordion === index ? "open" : ""}`}>
-                                                                        <div className="modal-table-container">
-                                                                                <div className="modal-table-wrapper">
-                                                                                        <table className="modal-table">
-                                                                                                <thead>
-                                                                                                        <tr>
-                                                                                                                <th>Image</th>
-                                                                                                                <th>Food Name</th>
-                                                                                                                <th>Quantity</th>
-                                                                                                                <th>Price</th>
-                                                                                                        </tr>
-                                                                                                </thead>
-                                                                                                <tbody>{order.data.map(renderOrderRow)}</tbody>
-                                                                                        </table>
+                                                        </div>
+                                                ) : null}
+                                        </div>
+
+                                        <div className="history-quick-actions history-board-actions">
+                                                <button className="outline-premium-btn" onClick={handleOpenPastOrders}>
+                                                        <span className="material-symbols-outlined">history</span>
+                                                        Past Orders
+                                                </button>
+                                                <button className="outline-premium-btn" onClick={handleAddMoreItems}>
+                                                        <span className="material-symbols-outlined">add_shopping_cart</span>
+                                                        Add More
+                                                </button>
+                                                <button className="outline-premium-btn" onClick={handleReturnToCart}>
+                                                        <span className="material-symbols-outlined">arrow_back</span>
+                                                        Return to Cart </button>
+                                        </div>
+                                </div>
+                        </header>
+
+                        <main className="history-container-v2">
+                                {loadingOrders ? (
+                                        <div className="loader-center">
+                                                {Methods.showLoader()}
+                                                <p className="loading-text">Fetching your orders...</p>
+                                        </div>
+                                ) : !hasOrders ? (
+                                        <div className="empty-history-state">
+                                                <span className="empty-history-state-span material-symbols-outlined">receipt_long</span>
+                                                <h2 className="empty-history-state-h2">No active orders</h2>
+                                                <p className="empty-history-state-p">You haven't placed any orders for this session yet.</p>
+                                                <button className="main-btn mt-25" onClick={handleAddMoreItems}>
+                                                        View Menu
+                                                </button>
+                                        </div>
+                                ) : (
+                                        <div className="history-grid-layout">
+                                                <section className="active-orders-column">
+                                                        {orders.map((order, index) => (
+                                                                <div key={order._id}
+                                                                        className={`active-order-card ${openAccordion === index ? 'active-order-card--open' : ''}`}
+                                                                        style={{ animationDelay: `${index * 70}ms` }}>
+
+                                                                        {/* ── Header ── */}
+                                                                        <div className="card-header" onClick={() => toggleAccordion(index)}>
+                                                                                <div className="header-left">
+                                                                                        <span className="card-order-num">Order #{index + 1}</span>
+                                                                                        <div className="card-meta-row">
+                                                                                                <span className="order-time">
+                                                                                                        <span className="material-symbols-outlined">schedule</span>
+                                                                                                        {Methods.formatReadableDate(order.createdAt)}
+                                                                                                </span>
+                                                                                                <div className="item-count-badge">{order.data.length} {order.data.length === 1 ? 'item' : 'items'}</div>
+                                                                                        </div>
+                                                                                </div>
+                                                                                <div className="card-header-right">
+                                                                                        <span className="card-subtotal-preview">₹{order.totalamount}</span>
+                                                                                        <div className={`expand-icon ${openAccordion === index ? "rotated" : ""}`}>
+                                                                                                <span className="material-symbols-outlined">keyboard_arrow_down</span>
+                                                                                        </div>
                                                                                 </div>
                                                                         </div>
-                                                                        <div className="order-summary-details">
-                                                                                <p></p>
-                                                                                <p>Amount: ₹{order.totalamount}</p>
+
+                                                                        {/* ── Body ── */}
+                                                                        <div className={`card-body ${openAccordion === index ? "expanded" : ""}`}>
+                                                                                <div className="order-items-list">
+                                                                                        {order.data.map((item, i) => (
+                                                                                                <div key={i} className="mini-item-row">
+                                                                                                        <div className="mini-img-wrap">
+                                                                                                                <img src={item.imageurl} alt={item.foodname} />
+                                                                                                                <span className="mini-qty-chip">×{item.quantity}</span>
+                                                                                                        </div>
+                                                                                                        <div className="mini-details">
+                                                                                                                <h4>{item.foodname}</h4>
+                                                                                                                <p>₹{item.price} <em>each</em></p>
+                                                                                                        </div>
+                                                                                                        <div className="mini-line-total">₹{(item.price * item.quantity).toFixed(2)}</div>
+                                                                                                </div>
+                                                                                        ))}
+                                                                                </div>
+                                                                                <div className="order-card-footer">
+                                                                                        <div className="order-card-footer-label">
+                                                                                                <span className="material-symbols-outlined">receipt</span>
+                                                                                                Subtotal
+                                                                                        </div>
+                                                                                        <span className="order-card-footer-amt">₹{order.totalamount}</span>
+                                                                                </div>
+                                                                        </div>
+
+                                                                </div>
+                                                        ))}
+                                                </section>
+
+                                                <aside className="billing-sidebar-column" data-aos="fade-left">
+                                                        <div className="billing-panel billing-panel-compact">
+                                                                <div className="billing-compact-header">
+                                                                        <div>
+                                                                                <span className="billing-kicker">Billing Summary</span>
                                                                         </div>
                                                                 </div>
-                                                        </div>
-                                                ))}
 
-                                                <div className="tip-checkbox-row">
-                                                        <div className="tip-left">
-                                                                <label className="switch-wrapper">
-                                                                        <input
-                                                                                type="checkbox"
-                                                                                checked={includeTip}
-                                                                                onChange={() => setIncludeTip(!includeTip)}
-                                                                                className="switch-checkbox"
-                                                                        />
-                                                                        <span className="switch-slider" />
-                                                                        <span className="switch-label">Include Tip</span>
-                                                                </label>
-                                                                {includeTip && (
-                                                                        <input
-                                                                                type="text"
-                                                                                value={customTip}
-                                                                                onChange={(e) => {
-                                                                                        const value = e.target.value.replace(/\D/g, "");
-                                                                                        setCustomTip(value);
-                                                                                }}
-                                                                                className="tip-amount-input"
-                                                                                placeholder="Min ₹10"
-                                                                                maxLength={3}
-                                                                        />
-                                                                )}
-                                                        </div>
-                                                        <div className="final-total-amount tip-right">
-                                                                <h3>Total Amount: ₹{grandTotal.toFixed(2)}</h3>
-                                                        </div>
-                                                </div>
+                                                                <div className="billing-inline-stats">
+                                                                        <div className="billing-inline-stat">
+                                                                                <span className="billing-inline-stat-span main-color">Orders</span>
+                                                                                <strong className="billing-inline-stat-strong">{activeOrderCount}</strong>
+                                                                        </div>
+                                                                        <div className="billing-inline-stat">
+                                                                                <span className="billing-inline-stat-span main-color">Items</span>
+                                                                                <strong className="billing-inline-stat-strong">{totalOrderedItems}</strong>
+                                                                        </div>
+                                                                        <div className="billing-inline-stat">
+                                                                                <span className="billing-inline-stat-span main-color">Base</span>
+                                                                                <strong className="billing-inline-stat-strong">₹{finalTotalAmount.toFixed(2)}</strong>
+                                                                        </div>
+                                                                </div>
 
-                                                <div className="button-wrapper">
-                                                        <button className="main-btn fs-18" onClick={() => navigate(`/view-cart/${tabledata.data.id}`)}>Back to View Cart</button>
-                                                        <button className="main-btn fs-18" onClick={handleAddMoreItems}>Add More Items</button>
-                                                        <button className="main-btn fs-18" onClick={handleProceedToBilling}>Proceed to Billing</button>
-                                                </div>
-                                        </>
-                                ) : (
-                                        <>
-                                                <p className="no-orders-text">No orders found. Please place an order first!</p>
-                                                <div className="button-wrapper">
-                                                        <button className="main-btn fs-18" onClick={() => navigate(`/view-cart/${tabledata.data.id}`)}>Back to View Cart</button>
-                                                        <button className="main-btn fs-18" onClick={handleAddMoreItems}>Add More Items</button>
-                                                </div>
-                                        </>
+                                                                <div className="billing-breakdown">
+                                                                        <div className="tip-section-v2 tip-section-compact">
+                                                                                <label className="tip-toggle">
+                                                                                        <input
+                                                                                                type="checkbox"
+                                                                                                checked={includeTip}
+                                                                                                onChange={() => setIncludeTip(!includeTip)}
+                                                                                        />
+                                                                                        <div className="toggle-ui"></div>
+                                                                                        <span>Add a Tip?</span>
+                                                                                </label>
+
+                                                                                {includeTip && (
+                                                                                        <div className="tip-input-wrap tip-input-compact" data-aos="fade-right">
+                                                                                                <span className="currency-symbol">₹</span>
+                                                                                                <input
+                                                                                                        type="text"
+                                                                                                        value={customTip}
+                                                                                                        onChange={(e) => setCustomTip(e.target.value.replace(/\D/g, ""))}
+                                                                                                        placeholder="Amount"
+                                                                                                        maxLength={3}
+                                                                                                        autoFocus
+                                                                                                />
+                                                                                        </div>
+                                                                                )}
+                                                                        </div>
+
+                                                                        {includeTip ? (
+                                                                                <div className="billing-line">
+                                                                                        <span>Tip</span>
+                                                                                        <span>₹{tipAmount.toFixed(2)}</span>
+                                                                                </div>
+                                                                        ) : null}
+
+                                                                        {Config.allowtax === 1 && (
+                                                                                <div className="billing-line">
+                                                                                        <span>GST ({gstPercent}%)</span>
+                                                                                        <span>₹{gstAmount.toFixed(2)}</span>
+                                                                                </div>
+                                                                        )}
+
+                                                                        <div className="billing-line total-billing-line">
+                                                                                <span>Grand Total</span>
+                                                                                <span>₹{grandTotal.toFixed(2)}</span>
+                                                                        </div>
+
+                                                                </div>
+                                                                <div className="billing-action-group">
+                                                                        <button
+                                                                                className="main-btn"
+                                                                                onClick={handleProceedToBilling}
+                                                                        >
+                                                                                Proceed to Billing
+                                                                        </button>
+                                                                </div>
+                                                        </div>
+                                                </aside>
+                                        </div>
                                 )}
-                        </div>
+                        </main>
 
-                        {isSidebarOpen && (
-                                <div
-                                        className="sidebar-overlay"
-                                        onClick={() => Methods.toggleSidebar(setIsSidebarOpen, false)}
-                                ></div>
-                        )}
-
-                        {/* Sidebar container */}
-                        <div className={`sidebar-history-panel ${isSidebarOpen ? 'open' : ''}`}>
-                                <button
-                                        className="sidebar-close-btn user-not-select"
-                                        onClick={() => Methods.toggleSidebar(setIsSidebarOpen, false)}
-                                >
-                                        <span className="material-symbols-outlined">close</span>
-                                </button>
-
-                                {renderOldOrders()}
-                        </div>
-
+                        {/* Billing Modal */}
                         {modalVisible && (
-                                <div className="modal-overlay user-not-select">
+                                <div className={`modal-overlay user-not-select ${isAnimatingOut ? "fade-out" : ""}`}>
                                         <div className={`modal-content-select width-40 alert-modal ${isAnimatingOut ? "fade-out" : ""}`}>
-                                                <span className="material-symbols-outlined main-color fs-50">receipt_long</span>
-                                                <h3 className="modal-title fs-25 mt-15">Are you sure you want to proceed?</h3>
+                                                <span className="material-symbols-outlined main-color modal-icon fs-50">receipt_long</span>
+                                                <h3 className="modal-title fs-25">Confirm Billing?</h3>
                                                 <p className="main-color fs-20">
-                                                        Please review all order details carefully before confirming.
+                                                        Please review your summary. Once confirmed, you'll be directed to the final bill.
                                                 </p>
                                                 <p className="required fs-18">This action cannot be undone.</p>
-                                                <div>
-                                                        <button className="main-btn mr-20 plr-40" onClick={handleModalConfirm}>Yes</button>
-                                                        <button className="main-cancle-btn ml-20 plr-40" onClick={handleModalNo}>No</button>
+                                                <div className="mt-20">
+                                                        <button className="main-btn mr-20 plr-40" onClick={handleModalConfirm}>Confirm</button>
+                                                        <button className="main-cancle-btn ml-20 plr-40" onClick={handleModalNo}>Cancel</button>
                                                 </div>
                                         </div>
                                 </div>
                         )}
-
-                        {Methods.renderPopup(popup, () =>
-                                Methods.hidePopup(setPopup, popupTimer)
-                        )}
-                </>
+                </div>
         );
 };
 

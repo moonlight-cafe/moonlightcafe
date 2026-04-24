@@ -1,6 +1,9 @@
 import { API as SharedAPI, Method as SharedMethod } from "../config/Init.js";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar.js";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import "./ViewCart.css";
 
 const BackendApis = SharedAPI;
@@ -24,6 +27,7 @@ export default function ViewCart() {
   };
 
   useEffect(() => {
+    AOS.init({ duration: 800, once: true });
     if (customerdata.status !== 200) {
       localStorage.setItem("redirectAfterLogin", window.location.pathname);
       navigate("/login");
@@ -35,9 +39,12 @@ export default function ViewCart() {
       return;
     }
   }, [navigate]);
-  const tableNo = tabledata.data.table_no;
-  const clientName = customerdata.data.name;
-  const clientEmail = customerdata.data.email;
+
+  const tableNo = tabledata?.data?.table_no || "N/A";
+  const clientName = customerdata?.data?.name || "Customer";
+  const clientEmail = customerdata?.data?.email || "";
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const selectedDishes = cartItems.length;
 
   const calculateTotalPrice = useCallback((items) => {
     const subtotal = items.reduce((acc, item) => acc + Number(item.price), 0);
@@ -48,30 +55,18 @@ export default function ViewCart() {
     setLoading(true);
     setError(null);
 
-    if (!customerdata.data._id) {
-      setError("User not logged in");
-      setLoading(false);
-      return;
-    }
-
     const savedCart = Methods.getCookie("addtocart");
-    if (savedCart) {
-      if (savedCart && savedCart.length > 0) {
-        setCartItems(savedCart);
-        setIsCartEmpty(false);
-        calculateTotalPrice(savedCart);
-      } else {
-        setCartItems([]);
-        setIsCartEmpty(true);
-        setError("Your cart is empty.");
-      }
+    if (savedCart && savedCart.length > 0) {
+      setCartItems(savedCart);
+      setIsCartEmpty(false);
+      calculateTotalPrice(savedCart);
     } else {
       setCartItems([]);
       setIsCartEmpty(true);
       setError("Your cart is empty.");
     }
     setLoading(false);
-  }, [calculateTotalPrice, customerdata.data._id]);
+  }, [calculateTotalPrice]);
 
   useEffect(() => {
     fetchCartItems();
@@ -108,7 +103,6 @@ export default function ViewCart() {
 
   const handleOrderPlaced = async () => {
     if (isPlacingOrder) return;
-
     setIsPlacingOrder(true);
 
     try {
@@ -133,91 +127,178 @@ export default function ViewCart() {
         showPopup("Order placed successfully!", "success");
 
         setTimeout(() => {
-          navigate(`/order/history/${tabledata.data.id}`);
-        }, 1000);
+          navigate(`/order/summery/${tabledata.data.id}`);
+        }, 1200);
       } else {
-        showPopup("Failed to place the order. Please try again.", "error");
-        setIsPlacingOrder(false); // allow retry
+        showPopup(response.message || "Failed to place order.", "error");
+        setIsPlacingOrder(false);
       }
     } catch (err) {
-      console.error("Error placing the order:", err);
-      showPopup("Something went wrong. Please try again later.", "error");
-      setIsPlacingOrder(false); // allow retry
+      showPopup("Something went wrong. Please try again.", "error");
+      setIsPlacingOrder(false);
     }
   };
 
+  if (loading) return (
+    <div className="full-height-page">
+      <div className="loader-wrap">
+        {Methods.showLoader()}
+        <p className="loading-text">PREPARING YOUR FEAST</p>
+      </div>
+    </div>
+  );
+
   return (
-    <>
-      <div className="view-cart-container">
-        <h2 className="view-cart-h2">Your Cart</h2>
-        <hr style={{ backgroundColor: "#47d9a8", height: "2px", border: "none" }} />
-        <div className="order-info mt-20">
-          <div className="order-info-item fs-18">
-            <strong>Customer:</strong> {clientName}
-          </div>
+    <div className="cart-page-wrapper user-not-select">
+      <Navbar />
+      {Methods.renderPopup(popup, () => Methods.hidePopup(setPopup, popupTimer))}
 
-          <div className="order-info-item fs-18">
-            <strong>Email:</strong> {clientEmail}
-          </div>
-
-          <div className="order-info-item fs-18">
-            <strong>Table No:</strong> {tableNo}
+      <header className="cart-header-v2" data-aos="fade-down">
+        <div className="cart-header-main">
+          <span className="material-symbols-outlined header-icon">shopping_cart</span>
+          <div className="cart-header-copy">
+            <span className="cart-header-tag">Dine-In Cart</span>
+            <h1>Your Cart</h1>
           </div>
         </div>
+        <div className="cart-context-board">
+          <div className="context-board-intro">
+            <span className="material-symbols-outlined">room_service</span>
+            <div>
+              <p>Everything for your table is in one place.</p>
+              <small>Review dishes, fine-tune quantities, and send the order to the kitchen when you're ready.</small>
+            </div>
+          </div>
 
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p className="empty-cart">{error}</p>
-        ) : cartItems.length === 0 ? (
-          <p className="empty-cart">Your cart is empty.</p>
+          <div className="context-board-grid">
+            <div className="context-detail-card">
+              <span className="context-detail-label main-color">Serving Table</span>
+              <div className="context-detail-value">
+                <span className="material-symbols-outlined">table_restaurant</span>
+                <strong>{tableNo}</strong>
+              </div>
+            </div>
+
+            <div className="context-detail-card">
+              <span className="context-detail-label main-color">Customer Name</span>
+              <div className="context-detail-value">
+                <span className="material-symbols-outlined">person</span>
+                <strong>{clientName}</strong>
+              </div>
+            </div>
+
+            {clientEmail ? (
+              <div className="context-detail-card">
+                <span className="context-detail-label main-color">Login Email</span>
+                <div className="context-detail-value">
+                  <span className="material-symbols-outlined">alternate_email</span>
+                  <strong>{clientEmail}</strong>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </header>
+
+      <main className="cart-container-v2">
+        {isCartEmpty || cartItems.length === 0 ? (
+          <div className="empty-cart-v2" data-aos="zoom-in">
+            <span className="material-symbols-outlined">shopping_bag</span>
+            <h2>Your cart is empty...</h2>
+            <p>Ready to discover some spectacular flavors?</p>
+            <button className="main-cancle-btn mt-25" onClick={() => navigate(`/dine-in/menu/${tabledata.data.id}`)}>
+              Browse the Menu
+            </button><br />
+            <button className="main-btn mt-25" onClick={() => {
+              setTimeout(() => {
+                navigate(`/order/summery/${tabledata.data.id}`);
+              }, 1200);
+            }}>
+              Order History
+            </button>
+          </div>
         ) : (
-          <div>
-            <div className="view-cart-items">
-              {cartItems.map((item) => (
-                <div key={item._id} className="view-cart-item">
-                  <img src={item.imageurl} alt={item.foodname} className="view-cart-item-image" />
-                  <div className="view-cart-item-details">
-                    <h4 className="view-cart-item-details-h4">{item.foodname}</h4>
-                    <p className="view-cart-item-details-p fs-18">Price: ₹{Number(item.price).toFixed(2)}</p>
-                    <div className="quantity-controls">
-                      <button className="main-btn plr-10 ptb-1" onClick={() => handleQuantityChange(item.foodid, item.quantity - 1)}>
-                        <span className="material-symbols-outlined mt-5">remove</span>
-                      </button>
-                      <span className="quantity-display">{item.quantity}</span>
-                      <button className="main-btn plr-10 ptb-1" onClick={() => handleQuantityChange(item.foodid, item.quantity + 1)}>
-                        <span className="material-symbols-outlined mt-5">add</span>
+          <div className="cart-grid-layout">
+            <section className="cart-items-column">
+              {cartItems.map((item, idx) => (
+                <div key={item.foodid} className="cart-item-modern" data-aos="fade-up" data-aos-delay={idx * 50}>
+                  <div className="item-thumb">
+                    <img src={item.imageurl} alt={item.foodname} />
+                  </div>
+
+                  <div className="item-content">
+                    <div className="item-top-row">
+                      <h3>{item.foodname}</h3>
+                      <button className="delete-icon-btn" onClick={() => handleRemoveItem(item.foodid)}>
+                        <span className="material-symbols-outlined">delete_sweep</span>
                       </button>
                     </div>
-                    <button className="main-btn plr-10 ptb-1" onClick={() => handleRemoveItem(item.foodid)}>
-                      <span className="material-symbols-outlined mt-5">delete</span>
-                    </button>
+
+                    <div className="item-bottom-row">
+                      <div className="item-price-glow">₹{parseFloat(item.price).toFixed(2)}</div>
+                      <div className="qty-stepper">
+                        <button onClick={() => handleQuantityChange(item.foodid, item.quantity - 1)}>
+                          <span className="material-symbols-outlined">remove</span>
+                        </button>
+                        <span className="qty-val">{item.quantity}</span>
+                        <button onClick={() => handleQuantityChange(item.foodid, item.quantity + 1)}>
+                          <span className="material-symbols-outlined">add</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
-            </div>
+            </section>
 
-            <h3 className="total-price-h3">Price: ₹{totalPrice.toFixed(2)}</h3>
+            <aside className="cart-summary-column" data-aos="fade-left">
+              <div className="checkout-panel checkout-panel-compact">
+                <div className="checkout-compact-header">
+                  <div>
+                    <span className="checkout-kicker">Order Summary</span>
+                  </div>
+                </div>
 
-            <div className="view-cart-summary">
-              <button className="main-btn fs-18" onClick={() => navigate(`/dine-in/menu/${tabledata.data.id}`)}>Add Another Item</button>
-              <button className="main-btn mr-20 ml-20 fs-18" onClick={handleOrderPlaced} disabled={isPlacingOrder}>
-                {isPlacingOrder ? "Placing Order..." : "Order Placed"}
-              </button>
-              <button className="main-btn fs-18" onClick={() => navigate(`/order/history/${tabledata.data.id}`)}>View Last Orders</button>
-            </div>
+                <div className="checkout-inline-stats">
+                  <div className="checkout-inline-stat">
+                    <span className="checkout-inline-stat-span main-color">Dishes</span>
+                    <span className="checkout-inline-stat-strong">{selectedDishes}</span>
+                  </div>
+                  <div className="checkout-inline-stat">
+                    <span className="checkout-inline-stat-span main-color">Items</span>
+                    <span className="checkout-inline-stat-strong">{totalItems}</span>
+                  </div>
+
+                  <div className="checkout-inline-stat">
+                    <span className="checkout-inline-stat-span main-color">Amount</span>
+                    <span className="checkout-inline-stat-strong">₹{totalPrice.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <div className="summary-cta-group">
+                  <button
+                    className="main-btn width-100 place-order-btn"
+                    onClick={handleOrderPlaced}
+                    disabled={isPlacingOrder}
+                  >
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {isPlacingOrder ? "Placing Order..." : "Place Order"}
+                  </button>
+
+                  <div className="summary-footer-actions">
+                    <button className="summary-ghost-btn" onClick={() => navigate(`/dine-in/menu/${tabledata.data.id}`)}>
+                      <span className="material-symbols-outlined">add</span> Add More
+                    </button>
+                    <button className="summary-ghost-btn" onClick={() => navigate(`/order/summery/${tabledata.data.id}`)}>
+                      <span className="material-symbols-outlined">history</span> History
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
         )}
-
-        {isCartEmpty && (
-          <div style={{ marginTop: "20px" }}>
-            <button className="main-btn mr-20 fs-18" onClick={() => navigate(`/dine-in/menu/${tabledata.data.id}`)}>Add something</button>
-            <button className="main-btn fs-18" onClick={() => navigate(`/order/history/${tabledata.data.id}`)}>View Last Orders</button>
-          </div>
-        )}
-      </div>
-
-      {Methods.renderPopup(popup, () => Methods.hidePopup(setPopup, popupTimer))}
-    </>
+      </main>
+    </div>
   );
 }

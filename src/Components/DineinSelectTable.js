@@ -2,6 +2,7 @@ import { API as SharedAPI, Method as SharedMethod } from "../config/Init.js";
 import React, { useEffect, useState, useRef } from "react";
 import "./DineinSelectTable.css";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar.js";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -127,96 +128,90 @@ export default function DineinSelectTable() {
 
   return (
     <>
-      <div className="viewtable-container">
-        <header className="table-header">
-          <h2 className="dine-in-heading">Select Table</h2>
-          <p className="dine-in-note">Note: Please select your own table.</p>
-          <hr />
+      <div className="dinein-table-page-wrapper user-not-select">
+        <Navbar />
+
+        <header className="dinein-table-hero">
+          <div className="dinein-hero-content">
+            <h2 className="services-title fs-30 main-color m-0">
+              <span className="material-symbols-outlined fs-50">restaurant</span>
+              Dine In
+            </h2>
+            <h1 className="dinein-title">Choose Your Table</h1>
+            <p className="dinein-subtitle">Please select the table you are currently seated at to begin your orders.</p>
+          </div>
         </header>
 
         {loading ? (
-          <div className="center-loader">{Methods.showLoader()}</div>
+          Methods.showLoader()
         ) : error ? (
           <>
-            <div className="center-loader">{Methods.showLoader()}</div>
+            {Methods.showLoader()}
             <p className="dinein-table-error">{error}</p>
           </>
         ) : tables.length > 0 ? (
-          <div className="table-content">
-            {tables.map((table, index) => (
-              <section
-                key={table._id}
-                ref={(el) => (tableRefs.current[index] = el)}
-                className="table-grid"
-                data-aos="fade-up"
-                data-aos-delay={index * 100}
-              >
-
-                <a
-                  href="#!"
-                  className="table-link"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTableClick(table);
-                  }}
+          <main className="tables-grid-section">
+            <div className="tables-container">
+              {tables.map((table, index) => (
+                <div
+                  key={table._id}
+                  ref={(el) => (tableRefs.current[index] = el)}
+                  className={`table-premium-card ${table.isavailable === 0 ? "booked" : "available"}`}
+                  data-aos="fade-up"
+                  data-aos-delay={index * 50}
+                  onClick={() => handleTableClick(table)}
                 >
-                  <div
-                    className={`table-item ${table.isavailable === 0 ? "not-available" : "available"}`}
-                  >
-                    <div className="table-content-wrapper">
-                      <h3 className="table-title">Table {table.number}</h3>
-                      <p className="table-availability">
-                        {table.isavailable === 1 ? "Available" : "Not Available"}
-                      </p>
+                  <div className="table-card-inner">
+                    <div className="table-visual-side">
+                      <span className="material-symbols-outlined table-main-icon">
+                        {table.isavailable === 1 ? "table_restaurant" : "event_busy"}
+                      </span>
+                    </div>
+                    <div className="table-info-side">
+                      <span className="table-label">Table</span>
+                      <span className="table-number-text">{table.number}</span>
+                      <div className={`status-pill ${table.isavailable === 1 ? "free" : "busy"}`}>
+                        {table.isavailable === 1 ? "Available" : "Booked"}
+                      </div>
                     </div>
                   </div>
-                </a>
-              </section>
-            ))}
-          </div>
-        ) : (
-          <p className="freetables">No available tables.</p>
-        )}
-
-      </div>
-      {/* Booked Table Modal */}
-      {/* {modalVisible && modalAction?.type === "booked" && (
-        <div className="modal-overlay">
-          <div className="modal-content-booked">
-            <span className="material-symbols-outlined modal-icon-booked">no_meals</span>
-            <p className="modal-content-booked-label">
-              This table is already booked, please select your own table
-            </p>
-            <div className="modal-buttons">
-              <button onClick={handleModalNo}>Okay</button>
+                  <div className="card-ambient-glow"></div>
+                </div>
+              ))}
             </div>
+          </main>
+        ) : (
+          <div className="no-tables-state">
+            <span className="material-symbols-outlined">event_busy</span>
+            <p>We're fully booked at the moment. Please wait for a few minutes or choose Take Away.</p>
+            <button className="goto-home-btn" onClick={() => navigate('/home')}>Return to Home</button>
           </div>
-        </div>
-      )} */}
-
+        )}
+      </div>
       {modalVisible && modalAction?.type === "booked" && (
-        <div className="modal-overlay user-not-select">
+        <div className={`modal-overlay user-not-select ${isAnimatingAlertOut ? "fade-out" : ""}`}>
           <div className={`modal-content-select width-40 alert-modal ${isAnimatingAlertOut ? "fade-out" : ""}`}>
-            <span className="material-symbols-outlined modal-icon required  xfs-50">no_meals</span>
+            <span className="material-symbols-outlined modal-icon required fs-50">no_meals</span>
             <h3 className="modal-title fs-25 required">Are you sure?</h3>
-            <p className="required fs-18">The Table You are Select is Already Booked.</p>
-            <div>
-              <button className="main-cancle-btn mt-10 plr-40" onClick={handleModalNo}>Okay</button>
+            <p className="modal-description fs-20 required">The Table You are Select is Already Booked.</p>
+            <p className="note required fs-20">Please select your own table.</p>
+            <div className="mt-20">
+              <button className="main-cancle-btn plr-40" onClick={handleModalNo}>Okay</button>
             </div>
           </div>
         </div>
       )}
 
       {modalVisible && modalAction?.type === "select" && (
-        <div className="modal-overlay user-not-select">
+        <div className={`modal-overlay user-not-select ${isAnimatingAlertOut ? "fade-out" : ""}`}>
           <div className={`modal-content-select width-40 alert-modal ${isAnimatingAlertOut ? "fade-out" : ""}`}>
             <span className="material-symbols-outlined modal-icon fs-50">restaurant</span>
-            <h3 className="modal-title fs-25 ">Are you sure?</h3>
+            <h3 className="modal-title fs-25">Are you sure?</h3>
             <p className="main-color fs-20">
               Please confirm your selection of Table No: {modalAction.table.number}.
             </p>
             <p className="required fs-18">This action cannot be undone.</p>
-            <div>
+            <div className="mt-20">
               <button className="main-btn mr-20 plr-40" onClick={handleModalConfirm}>Yes</button>
               <button className="main-cancle-btn ml-20 plr-40" onClick={handleModalNo}>No</button>
             </div>

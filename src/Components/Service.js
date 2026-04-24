@@ -1,107 +1,95 @@
-import { API as SharedAPI, Method as SharedMethod } from "../config/Init.js";
-import React, { useState, useEffect, useRef } from 'react';
+import { API as SharedAPI, Method as SharedMethod, Config as SharedConfig } from "../config/Init.js";
+import React, { useState, useEffect } from 'react';
 import './Service.css';
 import Navbar from './Navbar';
 
 const BackendAPIs = SharedAPI;
 const Methods = SharedMethod;
+const Config = SharedConfig;
 
 const Service = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null);
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await BackendAPIs.Services()
-        setServices(response);
+        const response = await BackendAPIs.Services();
+        setServices(response.data || []);
         setLoading(false);
       } catch (err) {
         setError('Error fetching services');
         setLoading(false);
       }
     };
-
     fetchServices();
   }, []);
-
-  useEffect(() => {
-    if (!services.data) return;
-
-    const elements = document.querySelectorAll('.reveal');
-
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        root: scrollRef.current,
-        threshold: 0.1,
-        rootMargin: '0px 0px -10% 0px'
-      }
-    );
-
-    elements.forEach(el => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, [services]);
 
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="full-height-page">
-          <div className="loading-service">
-            {Methods.showLoader()}
-          </div>
+        <div className="service-loader-container">
+          {Methods.showLoader()}
         </div>
       </>
     );
   }
 
-  if (error) {
-    return (
-      <>
-        <Navbar />
-        <div className="full-height-page">
-          <div className="ServicesFetchError">
-            {Methods.showLoader()}
-          </div>
-        </div>
-      </>
-    );
-  }
+  const getServiceIcon = (name) => {
+    const n = name.toLowerCase();
+    if (n.includes('dine')) return 'restaurant';
+    if (n.includes('take') || n.includes('away')) return 'shopping_bag';
+    if (n.includes('delivery')) return 'delivery_dining';
+    if (n.includes('reserve') || n.includes('table')) return 'event_seat';
+    return 'star';
+  };
 
   return (
-    <>
+    <div className="services-page-wrapper user-not-select">
       <Navbar />
-      <div ref={scrollRef} className="futuristic-service-container scroll-area">
 
-        <h1 className="futuristic-service-title reveal">
-          Our Services
-        </h1>
+      <header className="services-hero">
+        <div className="services-hero-content">
+          <span className="services-badge">World Class Services</span>
+          <h1 className="services-title">Crafting Your Perfect Experience</h1>
+          <p>From cozy dine-ins to speedy deliveries, we ensure every interaction is filled with the magic of Moonlight.</p>
+        </div>
+      </header>
 
-        <div className="futuristic-service-grid" style={{ marginBottom: "2rem" }}>
-          {services.data.map((service, index) => (
-            <div
-              key={service.id}
-              className="futuristic-service-card reveal"
-              style={{ transitionDelay: `${index * 100}ms` }}
-            >
-              <h2>{service.name}</h2>
-              <p>{service.description}</p>
+      <main className="services-grid-section">
+        <div className="services-grid-container">
+          {services.map((service, index) => (
+            <div key={index} className="service-premium-card" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div className="service-card-inner">
+                <div className="service-icon-box">
+                  <span className="material-symbols-outlined">{getServiceIcon(service.name)}</span>
+                </div>
+                <div className="service-card-content">
+                  <h3>{service.name}</h3>
+                  <p>{service.description}</p>
+                </div>
+              </div>
+              <div className="card-ambient-glow"></div>
             </div>
           ))}
         </div>
-      </div>
-    </>
+      </main>
+
+      <section className="services-feature-callout">
+        <div className="feature-callout-inner">
+          <div className="feature-text">
+            <h2>Looking for something special?</h2>
+            <p>Our team is dedicated to making every visit unique. Reach out for custom event bookings or special requests.</p>
+            <button className="contact-special-btn" onClick={() => window.location.href = '/contactus'}>Contact for Special Events</button>
+          </div>
+          <div className="feature-visual">
+            <span className="material-symbols-outlined large-symbol">celebration</span>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };
 

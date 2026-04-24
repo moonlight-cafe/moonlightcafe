@@ -1,127 +1,210 @@
-.notfound-wrapper {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        box-sizing: border-box;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+.notfound-page-container {
+    min-height: 100vh;
+    background: #000;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
 }
 
-.notfound-box {
-        max-width: 550px;
-        width: 100%;
-        border: 2px solid rgb(71, 217, 168);
-        box-shadow: 0 0 20px rgba(71, 217, 168, 0.5);
-        padding: 0;
-        border-radius: 40px;
-        background-color: rgba(0, 0, 0, 0.5);
-        animation: fadeInZoom 0.6s ease forwards;
+.notfound-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 100px 5%;
+    position: relative;
+    z-index: 10;
+}
+
+.notfound-glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(71, 217, 168, 0.2);
+    border-radius: 40px;
+    width: 100%;
+    max-width: 900px;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
+    animation: cardEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardEntry {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* VISUAL SECTION */
+.notfound-visual {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notfound-404-glow {
+    font-size: 10rem;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(71, 217, 168, 0.05);
+    background: linear-gradient(135deg, #47d9a8 0%, rgba(71, 217, 168, 0.1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: absolute;
+    letter-spacing: -5px;
+    filter: blur(2px);
+}
+
+.notfound-portal-ring {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border: 1px dashed rgba(71, 217, 168, 0.3);
+    border-radius: 50%;
+    animation: rotate 15s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.notfound-logo-float {
+    width: 140px;
+    z-index: 2;
+    animation: float 5s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(71, 217, 168, 0.2));
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(5deg);
+    }
+}
+
+/* TEXT SECTION */
+.notfound-text-zone {
+    flex: 1;
+}
+
+.notfound-tag {
+    color: #47d9a8;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 4px;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.notfound-title {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.notfound-desc {
+    color: #888;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.notfound-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* DECORATION */
+.notfound-decoration-orb {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(71, 217, 168, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(60px);
+}
+
+.orb-1 {
+    top: -100px;
+    right: -100px;
+}
+
+.orb-2 {
+    bottom: -100px;
+    left: -100px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .notfound-glass-card {
+        flex-direction: column;
         text-align: center;
-        box-sizing: border-box;
-}
+        padding: 50px 30px;
+    }
 
-.notfoundiimg {
-        padding: 30px 12px 0px 12px;
-}
+    .notfound-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 
-.notfoundtext {
-        padding: 0px 0px 30px 0px;
-}
+    .notfound-visual {
+        width: 220px;
+        height: 220px;
+    }
 
-.notfound-image {
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto 30px;
-        display: block;
-        border-radius: 12px;
-        animation: fadeInZoom 1.5s ease forwards;
-}
+    .notfound-404-glow {
+        font-size: 6rem;
+    }
 
-.notfound-heading {
-        font-size: 2.25rem;
-        /* 36px */
-        color: #47d9a8;
-        margin-bottom: 10px;
-        animation: fadeInZoom 1.5s ease-in-out forwards;
-}
+    .notfound-portal-ring {
+        width: 200px;
+        height: 200px;
+    }
 
-.notfound-text {
-        font-size: 1.125rem;
-        /* 18px */
-        color: #d76363;
-        margin-bottom: 30px;
-        padding: 0 40px;
-        animation: fadeInZoom 1.5s ease-in-out forwards;
-}
+    .notfound-logo-float {
+        width: 100px;
+    }
 
-.notfound-home-btn {
-        display: inline-block;
-        padding: 12px 30px;
-        font-size: 1rem;
-        /* 16px */
-        background-color: #47d9a8;
-        color: #144c3b;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-        animation: fadeInZoom 0.8s ease-in-out forwards;
-}
-
-.notfound-home-btn:hover {
-        background-color: #144c3b;
-        color: #47d9a8;
-}
-
-/* -------- Responsive Media Queries -------- */
-
-@media (max-width: 768px) {
-        .notfound-heading {
-                font-size: 1.75rem;
-                /* ~28px */
-        }
-
-        .notfound-text {
-                font-size: 1rem;
-                padding: 0 35px;
-        }
-
-        .notfound-home-btn {
-                padding: 10px 24px;
-                font-size: 0.95rem;
-        }
-
-        /* .notfound-image {
-                max-width: 300px;
-        } */
-
-        .notfound-box {
-                border-radius: 30px;
-        }
+    .notfound-title {
+        font-size: 2.2rem;
+    }
 }
 
 @media (max-width: 480px) {
-        .notfound-heading {
-                font-size: 1.5rem;
-                /* ~24px */
-        }
+    .notfound-title {
+        font-size: 1.8rem;
+    }
 
-        .notfound-text {
-                font-size: 0.95rem;
-                padding: 0 20px;
-        }
-
-        .notfound-home-btn {
-                width: 50%;
-                padding: 12px;
-                font-size: 0.95rem;
-        }
-
-        .notfound-image {
-                max-width: 250px;
-        }
-
-        .notfound-box {
-                border-radius: 20px;
-        }
+    .notfound-desc {
+        font-size: 1rem;
+    }
 }

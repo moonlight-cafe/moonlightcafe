@@ -137,7 +137,7 @@ export default function TakeAwayViewCart() {
                                 showPopup("Order placed successfully!", "success");
 
                                 setTimeout(() => {
-                                        navigate(`/take-away/order/history/${randomString}`);
+                                        navigate(`/take-away/order/summery/${randomString}`);
                                 }, 1000);
                         } else {
                                 showPopup("Failed to place the order.", "error");
@@ -215,7 +215,7 @@ export default function TakeAwayViewCart() {
                                                                 {isPlacingOrder ? "Placing Order..." : "Order Placed"}
                                                         </button>
 
-                                                        <button className="main-btn fs-18" onClick={() => navigate(`/take-away/order/history/${randomString}`)}>
+                                                        <button className="main-btn fs-18" onClick={() => navigate(`/take-away/order/summery/${randomString}`)}>
                                                                 View Last Orders
                                                         </button>
                                                 </div>
@@ -227,7 +227,7 @@ export default function TakeAwayViewCart() {
                                                 <button className="main-btn mr-20 fs-18" onClick={() => navigate(`/take-away/menu/${randomString}`)}>
                                                         Add something
                                                 </button>
-                                                <button className="main-btn fs-18" onClick={() => navigate(`/take-away/order/history/${randomString}`)}>
+                                                <button className="main-btn fs-18" onClick={() => navigate(`/take-away/order/summery/${randomString}`)}>
                                                         View Last Orders
                                                 </button>
                                         </div>

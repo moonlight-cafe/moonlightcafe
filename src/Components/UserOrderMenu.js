@@ -21,6 +21,9 @@ export default function UserOrderMenu() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [popup, setPopup] = useState({ message: "", type: "", visible: false });
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [animatingItemId, setAnimatingItemId] = useState(null);
   const popupTimer = useRef(null);
   const navigate = useNavigate();
 
@@ -28,9 +31,23 @@ export default function UserOrderMenu() {
     Methods.showPopup(setPopup, popupTimer, message, type);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 200) {
+        setHeaderVisible(false); // Scroll Down - Hide
+      } else {
+        setHeaderVisible(true); // Scroll Up - Show
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true });
+    AOS.init({ duration: 800, once: true });
     if (customerdata.status !== 200) {
       localStorage.setItem("redirectAfterLogin", window.location.pathname);
       navigate("/login");
@@ -59,7 +76,7 @@ export default function UserOrderMenu() {
         if (customer.status === 200) {
           const favRes = await BackendApis.FetchFavItems(customer.data._id)
           if (favRes.status === 200) {
-            const favIds = favRes.data.map((fav) => fav._id);
+            const favIds = (favRes.data || []).map((fav) => fav._id);
             setFavoriteIds(favIds);
           }
         }
@@ -73,6 +90,12 @@ export default function UserOrderMenu() {
 
     fetchData();
   }, [navigate]);
+
+  const addToCartWithAnim = (item) => {
+    addToCart(item);
+    setAnimatingItemId(item._id);
+    setTimeout(() => setAnimatingItemId(null), 600);
+  };
 
   const addToCart = (foodItem) => {
     const customerdata = Methods.getCookie("customerdata");
@@ -160,162 +183,133 @@ export default function UserOrderMenu() {
     return matchesCategory && matchesSearch;
   });
 
+  if (loading) return (
+    <div className="full-height-page user-not-select">
+      <div className="loader-wrap">
+        {Methods.showLoader()}
+        <p style={{ color: 'var(--primary)', marginTop: '20px', fontWeight: '800', letterSpacing: '1px' }}>EXPLORING FLAVORS</p>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="full-height-page user-not-select">
+      <div className="no-results-v3">
+        <span className="material-symbols-outlined" style={{ color: '#ff4757' }}>cloud_off</span>
+        <h2>{error}</h2>
+        <button className="main-btn mt-20" onClick={returnHome}>Return Home</button>
+      </div>
+    </div>
+  );
+
   return (
-    <>
+    <div className="viewmenu-wrapper user-not-select">
       <Navbar />
-      {loading ? (
-        <div className="full-height-page">
-          <div className="loader-wrap">{Methods.showLoader()}</div>
+      {Methods.renderPopup(popup, () => Methods.hidePopup(setPopup, popupTimer))}
+
+      <header className="menu-minimal-header" data-aos="fade-down">
+        <h1>Order Menu</h1>
+      </header>
+
+      <div className={`nav-sticky-capsule ${headerVisible ? "" : "hidden"}`}>
+        <div className="search-field-modern" data-aos="fade-up">
+          <span className="material-symbols-outlined">search</span>
+          <input
+            type="text"
+            placeholder="What are you craving?"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-      ) : error ? (
-        <div className="full-height-page">
-          {Methods.showLoader()}
+
+        <div className="category-scroll-pill" data-aos="fade-up" data-aos-delay="100">
           <button
-            type="button"
-            className="mainbth"
-            style={{ marginTop: "50px" }}
-            onClick={returnHome}
-          >
-            Home
-          </button>
+            className={`cat-item-btn ${selectedCategory === "All" ? "active" : ""}`}
+            onClick={() => setSelectedCategory("All")}
+          >All</button>
+          {categories.map(cat => (
+            <button
+              key={cat.code}
+              className={`cat-item-btn ${selectedCategory === cat.code ? "active" : ""}`}
+              onClick={() => setSelectedCategory(cat.code)}
+            >{cat.name}</button>
+          ))}
         </div>
-      ) : (
-        <div className="viewmenu-container">
-          <header className="menu-header">
-            <h2 className="menu-header-h2">Start Your Order</h2>
-            <p className="menu-header-p">Choose from our freshly prepared menu items and add to your cart.</p>
-          </header>
+      </div>
 
-          <div className="menu-content">
-            <nav className="category-list">
-              <button
-                className={`main-btn plr-30 user-not-select ${selectedCategory === "All" ? "active" : ""}`}
-                onClick={() => setSelectedCategory("All")}
-              >
-                All
-              </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat.code}
-                  className={`main-btn ml-20 plr-20 user-not-select ${selectedCategory === cat.code ? "active" : ""}`}
-                  onClick={() => setSelectedCategory(cat.code)}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </nav>
+      <main className="menu-main-container">
+        {categories.filter(c => selectedCategory === "All" || c.code === selectedCategory).map((cat, catIdx) => {
+          const items = filteredItems.filter(i => i.categorycode === cat.code);
+          if (items.length === 0) return null;
 
-            <div className="search-container user-not-select">
-              <span className="material-symbols-outlined search-icon">search</span>
-              <input
-                type="text"
-                placeholder="Search for a dish..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-                maxLength={50}
-              />
-              {searchQuery && (
-                <span
-                  className="material-symbols-outlined search-close-icon"
-                  onClick={() => setSearchQuery("")}
-                  style={{ cursor: "pointer" }}
-                >
-                  close
-                </span>
-              )}
-            </div>
+          return (
+            <div key={cat._id} className="cat-section" data-aos="fade-up">
+              <h2 className="cat-title-glow">{cat.name}</h2>
+              <div className="food-glow-grid">
+                {items.map((item, idx) => (
+                  <div className="food-card-v3" key={item._id} data-aos="zoom-in" data-aos-delay={idx * 50}>
+                    <div className="card-v3-img">
+                      <img src={item.url} alt={item.name} />
+                      <button
+                        className={`fav-btn-float ${favoriteIds.includes(item._id) ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFavorite(item);
+                        }}
+                      >
+                        <span className="material-symbols-outlined">
+                          {favoriteIds.includes(item._id) ? 'favorite' : 'favorite_border'}
+                        </span>
+                      </button>
+                    </div>
 
-            <section className="menu-section">
-              {categories
-                .filter((cat) => selectedCategory === "All" || cat.code === selectedCategory)
-                .map((cat) => {
-                  const itemsInCategory = filteredItems.filter(
-                    (item) => item.categorycode === cat.code
-                  );
-                  if (!itemsInCategory.length) return null;
+                    <div className="card-v3-info">
+                      <div className="food-info-top">
+                        <h4>{item.name}</h4>
+                        <span className="food-v3-price">₹{parseFloat(item.price).toFixed(2)}</span>
+                      </div>
+                      <p className="food-v3-desc">{item.description || "Indulge in our carefully prepared dish, featuring fresh ingredients and signature seasonings."}</p>
 
-                  return (
-                    <div key={cat._id} className="category-section" data-aos="fade-up">
-                      <h3 className="category-heading user-not-select">{cat.name}</h3>
-                      <div className="menu-grid">
-                        {itemsInCategory.map((item) => (
-                          <div className="menu-card-wrapper" key={item._id}>
-                            <div
-                              className="menu-card user-not-select"
-                              data-aos="zoom-in"
-                              data-aos-delay="200"
-                            >
-                              <div className="card-image-wrapper">
-                                <img src={item.url} alt={item.name} className="card-image" />
-                                <button
-                                  className={`fav-button-overlay ${favoriteIds.includes(item._id) ? "active" : ""}`}
-                                  onClick={() => handleToggleFavorite(item)}
-                                  title={favoriteIds.includes(item._id) ? "Remove from Favorite" : "Add to Favorite"}
-                                >
-                                  <span className="material-symbols-outlined">favorite</span>
-                                </button>
-                              </div>
-                              <div className="card-content">
-                                <div className="add-to-cartbtn">
-                                  <h4 className="card-title">{item.name}</h4>
-                                 {/*  {Methods.tooltip(
-                                    item.description,
-                                    <span className="material-symbols-outlined white ml-5" style={{ zIndex: "100" }}>info</span>
-                                  )} */}
-                                </div> <br />
-                                <span className="card-price">
-                                  ₹{parseFloat(item.price).toFixed(2)}
-                                </span>
-                                <br />
-                                {(addedItems || []).some((i) => i.foodid === item._id) ? (
-                                  <button className="main-btn mt-20 user-not-select" disabled>
-                                    Item Added
-                                  </button>
-                                ) : (
-                                  <button
-                                    className="main-btn fs-15 mt-20 add-to-cartbtn user-not-select"
-                                    onClick={() => addToCart(item)}
-                                  >
-                                    <span className="material-symbols-outlined">add</span>
-                                    <span style={{ marginTop: "2.5px" }}>Add to Cart</span>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
+                      <div className="card-v3-actions">
+                        {(addedItems || []).some((i) => i.foodid === item._id) ? (
+                          <div className={`item-added-pill ${animatingItemId === item._id ? "pop-anim" : ""}`}>
+                            <span className="material-symbols-outlined">check_circle</span>
+                            Added
                           </div>
-                        ))}
+                        ) : (
+                          <button
+                            className={`info-btn-v3 ${animatingItemId === item._id ? "pop-anim" : ""}`}
+                            onClick={() => addToCartWithAnim(item)}
+                          >
+                            <span className="material-symbols-outlined">add_shopping_cart</span>
+                            Add to Cart
+                          </button>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
 
-              {filteredItems.length === 0 && (
-                <>
-                  <p style={{ textAlign: "center", marginTop: "2rem", fontSize: "30px", color: "red" }}>
-                    No items found!
-                  </p>
-                  <button
-                    type="button"
-                    className="main-btn"
-                    onClick={() => setSearchQuery("")}
-                  >
-                    Clear Search
-                  </button>
-                </>
-              )}
-            </section>
+        {filteredItems.length === 0 && (
+          <div className="no-results-v3">
+            <span className="material-symbols-outlined">restaurant_menu</span>
+            <h2>We couldn't find anything matching your search.</h2>
+            <button className="main-btn mt-20" onClick={() => { setSearchQuery(""); setSelectedCategory("All"); }}>Reset Selection</button>
           </div>
+        )}
+      </main>
 
-          <div className="order-view-cart-container user-not-select">
-            <button className="main-btn add-to-cartbtn blur-5 plr-30 ptb-15" onClick={handleViewCart}>
-              <span className="material-symbols-outlined fs-20">shopping_cart</span>
-              View Cart
-            </button>
-          </div>
-        </div>
-      )}
-      {Methods.renderPopup(popup, () => Methods.hidePopup(setPopup, popupTimer))}
-    </>
+      <div className="view-cart-fab" data-aos="fade-up">
+        <button className="main-btn" onClick={handleViewCart}>
+          <span className="material-symbols-outlined">shopping_cart_checkout</span>
+          <span className="fab-text">View Cart</span>
+        </button>
+      </div>
+    </div>
   );
 }
+

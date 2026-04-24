@@ -6,6 +6,10 @@
         font-size: 15px !important;
 }
 
+.fs-16 {
+        font-size: 15px !important;
+}
+
 .fs-18 {
         font-size: 18px !important;
 }
@@ -48,6 +52,10 @@
 
 .main-color {
         color: #47d9a8 !important;
+}
+
+.main-cancle-color {
+        color: #d94747 !important;
 }
 
 .main-bg-color {
@@ -131,6 +139,23 @@
         width: 20% !important;
 }
 
+.width-80 {
+        width: 80% !important;
+}
+
+.width-90 {
+        width: 90% !important;
+}
+
+.width-100 {
+        width: 100% !important;
+}
+
+.mx-auto {
+        margin-left: auto !important;
+        margin-right: auto !important;
+}
+
 .ml-5 {
         margin-left: 5px !important;
 }
@@ -182,6 +207,18 @@
 .mtb-10 {
         margin-top: 10px !important;
         margin-bottom: 10px !important;
+}
+
+.mlr-10 {
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+}
+
+.mlr-20 {
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+        margin-left: 20px !important;
+        margin-right: 20px !important;
 }
 
 .mt-0 {
@@ -291,18 +328,31 @@
 }
 
 .main-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         background-color: transparent;
-        color: #28a87f;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-weight: bold;
+        color: #47d9a8;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.9rem;
         cursor: pointer;
         border: 1px solid #47d9a8;
-        transition: 0.1s;
+        transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        font-family: inherit;
+        letter-spacing: 0.2px;
 }
 
 .main-btn:hover {
-        background-color: #47d9a820;
+        background-color: rgba(71, 217, 168, 0.1);
+}
+
+.main-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        pointer-events: none;
 }
 
 .main-cancle-btn {
@@ -457,21 +507,35 @@
         }
 }
 
-@keyframes overlayFadeOut {
-        from {
-                opacity: 1;
+@keyframes fadeInZoom {
+        0% {
+                opacity: 0;
+                transform: scale(0.8);
         }
 
-        to {
-                opacity: 0;
+        100% {
+                opacity: 1;
+                transform: scale(1);
         }
 }
 
-.fadeout {
+@keyframes fadeOutZoomOut {
+        0% {
+                opacity: 1;
+                transform: scale(1);
+        }
+
+        100% {
+                opacity: 0;
+                transform: scale(0.8);
+        }
+}
+
+.fade-in {
         animation: overlayFadeIn 0.3s ease forwards;
 }
 
-.fadeout {
+.fade-out {
         animation: overlayFadeOut 0.3s ease forwards;
 }
 
@@ -539,7 +603,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 15;
+        user-select: none;
+        z-index: 9999999999;
 }
 
 .modal-content-select.order-modal {
@@ -867,6 +932,7 @@
 
 .common-input-text[type="number"] {
         -moz-appearance: textfield;
+        appearance: textfield;
 }
 
 /* Disabled input */
@@ -1461,4 +1527,152 @@
         .order-info {
                 flex-wrap: wrap;
         }
+}
+
+/* Common Table Styling */
+.common-tbl-box {
+        margin: 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 24px;
+        height: auto;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+}
+
+.common-tbl-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+}
+
+.common-tbl-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0;
+}
+
+.common-table-wrapper {
+        overflow-x: auto;
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-glass);
+}
+
+.common-table {
+        width: 100%;
+        border-collapse: collapse;
+}
+
+.common-table th,
+.common-table td {
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-glass);
+        color: var(--text-main);
+}
+
+.common-table th {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+}
+
+.common-table tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+}
+
+/* Modal Table Styling */
+.modal-table-container {
+        margin: 20px 0;
+}
+
+.modal-table-wrapper {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-glass);
+}
+
+.modal-table {
+        width: 100%;
+        border-collapse: collapse;
+}
+
+.modal-table th,
+.modal-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-glass);
+        color: var(--text-main);
+}
+
+.modal-table th {
+        background: var(--primary-light);
+        color: var(--primary);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+}
+
+/* Common Alert Box CSS */
+.modal-content-select.alert-modal {
+        background: #1e1e1e95;
+        border: 2px solid rgba(71, 217, 168, 0.3);
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(71, 217, 168, 0.3);
+        padding: 20px;
+        max-height: max-content;
+        color: #fff;
+        animation: fadeInZoom 0.6s ease forwards;
+        position: relative;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
+.modal-content-select.alert-modal.fade-out {
+        animation: fadeOutZoomOut 0.5s ease forwards;
+}
+
+.flex-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+/* Centered Loader Utilities */
+.loader-center,
+.center-loader,
+.loader-wrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 50vh;
+        gap: 15px;
+}
+
+.loader-center-full {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 9999;
 }

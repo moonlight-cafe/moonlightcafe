@@ -1,11 +1,12 @@
 import { API as SharedAPI, Method as SharedMethod, Config as SharedConfig } from "../config/Init.js";
 import React, { useState, useRef } from 'react';
-import './Register.css';
+import './Login.css'; // Reusing Login.css for consistent split-screen layout
 
 const Method = SharedMethod;
 const Config = SharedConfig;
 const BackendAPIs = SharedAPI;
-const navcafeimg = Config.moonlightcafelogo
+const cafelogo = Config.moonlightcafetext;
+const cafelogosquare = Config.moonlightcafelogosquare;
 
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +31,6 @@ const RegistrationPage = () => {
     Method.showPopup(setPopup, popupTimer, message, type, 5000);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -45,18 +45,18 @@ const RegistrationPage = () => {
       if (response.status !== 200) {
         showPopup(response.message || 'Registration failed', 'error');
       } else {
-        showPopup('Registration successful!', 'success');
+        showPopup('Registration successful! Redirecting...', 'success');
         setFormData({
           name: '',
           email: '',
-          mobile: '',
+          number: '',
           password: '',
           confirmPassword: '',
         });
 
         setTimeout(() => {
           window.location.href = '/login';
-        }, 1000);
+        }, 1500);
       }
     } catch (err) {
       console.error('Error during registration:', err);
@@ -67,92 +67,121 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="common-box-comtainer">
-      <div className="common-box">
-        <img src={navcafeimg} alt="Moonlight Cafe" className="registration-logo" />
+    <div className="auth-outer-wrapper user-not-select">
+      <div className="auth-left-panel">
+        <div className="auth-left-content">
+          <h1 className="auth-welcome-title">Join Us At</h1>
+          <div className="auth-logo-stack">
+            <img src={cafelogosquare} alt="Logo" className="auth-logo-sq" />
+            <img src={cafelogo} alt="Moonlight Cafe" className="auth-logo-tx" />
+          </div>
+          <p className="auth-left-tagline">
+            Register now to save your favorites, track orders, and unlock exclusive rewards.
+          </p>
+        </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="registration-form">
-          <div className="loginform-group">
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+      <div className="auth-right-panel">
+        <div className="auth-form-card register-card">
+          <div className="auth-header">
+            <h2>Create Account</h2>
+            <p>Start your delicious journey with us today.</p>
           </div>
 
-          <div className="loginform-group">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-input-group">
+              <label className="main-color fs-16">Name</label>
+              <div className="input-wrapper">
+                <span className="material-symbols-outlined input-icon">person</span>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
 
-          <div className="loginform-group">
-            <input
-              type="tel"
-              name="number"
-              placeholder="Mobile Number"
-              value={formData.number}
-              onChange={handleChange}
-              pattern="[0-9]{10}"
-              title="Please enter a 10-digit mobile number"
-              required
-            />
-          </div>
+            <div className="auth-input-row">
+              <div className="auth-input-group">
+                <label className="main-color fs-16">Email</label>
+                <div className="input-wrapper">
+                  <span className="material-symbols-outlined input-icon">mail</span>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="john@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="auth-input-group">
+                <label className="main-color fs-16">Mobile</label>
+                <div className="input-wrapper">
+                  <span className="material-symbols-outlined input-icon">phone</span>
+                  <input
+                    type="tel"
+                    name="number"
+                    placeholder="1234567890"
+                    value={formData.number}
+                    onChange={handleChange}
+                    pattern="[0-9]{10}"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
 
-          <div className="loginform-group password-group">
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <div className="auth-input-row">
+              <div className="auth-input-group">
+                <label className="main-color fs-16">Password</label>
+                <div className="input-wrapper">
+                  <span className="material-symbols-outlined input-icon">lock</span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <span className="material-symbols-outlined visibility-trigger" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </div>
+              </div>
+              <div className="auth-input-group">
+                <label className="main-color fs-16">Confirm</label>
+                <div className="input-wrapper">
+                  <span className="material-symbols-outlined input-icon">verified</span>
+                  <input
+                    type={cnfshowPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                  />
+                  <span className="material-symbols-outlined visibility-trigger" onClick={() => setcnfShowPassword(!cnfshowPassword)}>
+                    {cnfshowPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-            <span
-              className="material-symbols-outlined visibility-icon"
-              onClick={() => setShowPassword((prev) => !prev)}
-              style={{ cursor: "pointer", marginLeft: "10px", userSelect: "none" }}
-            >
-              {showPassword ? "visibility_off" : "visibility"}
-            </span>
-          </div>
+            <button className="main-btn" type="submit" disabled={loading}>
+              {loading ? <span className="btn-loader"></span> : <span className="fs-18">Create Account</span>}
+            </button>
+          </form>
 
-          <div className="loginform-group password-group">
-            <input
-              type={cnfshowPassword ? "text" : "password"}
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-
-            <span
-              className="material-symbols-outlined visibility-icon"
-              onClick={() => setcnfShowPassword((prev) => !prev)}
-              style={{ cursor: "pointer", marginLeft: "10px", userSelect: "none" }}
-            >
-              {cnfshowPassword ? "visibility_off" : "visibility"}
-            </span>
-          </div>
-
-          <button type="submit" className="login-button" disabled={loading}>
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-
-        <p className="login-link">
-          Already have an account? <a href="/login">Login</a>
-        </p>
+          <p className="auth-switch-link">
+            Already have an account? <a href="/login">Sign in</a>
+          </p>
+        </div>
       </div>
       {Method.renderPopup(popup, () => Method.hidePopup(setPopup, popupTimer))}
     </div>
