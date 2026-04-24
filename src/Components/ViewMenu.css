@@ -31,7 +31,7 @@
 .nav-sticky-capsule {
     position: sticky;
     top: 90px;
-    z-index: 10;
+    z-index: 100;
     padding: 20px 5%;
     display: flex;
     flex-direction: column;
@@ -42,6 +42,13 @@
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.3s;
+}
+
+.nav-sticky-capsule.hidden {
+    transform: translateY(-120%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .search-field-modern {
@@ -283,6 +290,45 @@
     margin-bottom: 20px;
 }
 
+.scroll-top-btn {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.5);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(71, 217, 168, 0.3);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.8);
+}
+
+.scroll-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.scroll-top-btn:hover {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 10px 30px rgba(71, 217, 168, 0.3);
+    transform: translateY(-5px) scale(1.1);
+}
+
+.scroll-top-btn span {
+    font-size: 30px !important;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .food-glow-grid {
@@ -302,5 +348,10 @@
     .nav-sticky-capsule {
         top: 70px;
         padding: 15px 5%;
+    }
+
+    .scroll-top-fab {
+        right: 20px;
+        bottom: 20px;
     }
 }

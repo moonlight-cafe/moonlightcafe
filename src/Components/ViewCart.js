@@ -21,6 +21,7 @@ export default function ViewCart() {
   const popupTimer = useRef(null);
   const navigate = useNavigate();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const showPopup = (message, type = "error") => {
     Methods.showPopup(setPopup, popupTimer, message, type, 5000);
@@ -38,7 +39,22 @@ export default function ViewCart() {
       navigate("/dine-in/select-table");
       return;
     }
+
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [navigate]);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const tableNo = tabledata?.data?.table_no || "N/A";
   const clientName = customerdata?.data?.name || "Customer";
@@ -299,6 +315,14 @@ export default function ViewCart() {
           </div>
         )}
       </main>
+
+      <button
+        className={`scroll-top-btn ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+      >
+        <span className="material-symbols-outlined">keyboard_arrow_up</span>
+      </button>
     </div>
   );
 }
