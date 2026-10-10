@@ -83,6 +83,80 @@ const DineInBilling = () => {
                         console.error("Order ID not found!");
                 }
         };
+
+        const PayOnlineFunction = async () => {
+                if (orderData && orderData._id) {
+                        setIsProcessing(true);
+
+                        const isScriptLoaded = await Methods.loadRazorpayScript();
+                        if (!isScriptLoaded) {
+                                showPopup("Failed to load Razorpay SDK. Are you online?", "error");
+                                setIsProcessing(false);
+                                return;
+                        }
+
+                        const payload = {
+                                amount: orderData.totalamount,
+                                currency: "INR",
+                                receipt: orderData.orderno
+                        };
+                        const orderResponse = await BackendAPIs.RazorpayCreateOrder(payload);
+
+                        if (orderResponse.status !== 200) {
+                                showPopup("Failed to create order.", "error");
+                                setIsProcessing(false);
+                                return;
+                        }
+
+                        const options = {
+                                key: Config.razorpay_key_id,
+                                amount: orderResponse.data.amount,
+                                currency: orderResponse.data.currency,
+                                name: "Moonlight Cafe",
+                                description: `Payment for Order ${orderData.orderno}`,
+                                order_id: orderResponse.data.id,
+                                handler: async function (response) {
+                                        setIsProcessing(true);
+                                        const verifyPayload = {
+                                                razorpay_order_id: response.razorpay_order_id,
+                                                razorpay_payment_id: response.razorpay_payment_id,
+                                                razorpay_signature: response.razorpay_signature,
+                                                order_id: orderData._id
+                                        };
+                                        const verifyRes = await BackendAPIs.RazorpayVerifyPayment(verifyPayload);
+
+                                        if (verifyRes.status === 200) {
+                                                setPaymentMode("online");
+                                                setOrderData(prev => ({ ...prev, adminstatus: 2 }));
+                                                setTimeout(() => {
+                                                        navigate(`/thank_you/${orderid}`);
+                                                }, 2000);
+                                        } else {
+                                                showPopup("Payment Verification Failed!", "error");
+                                        }
+                                        setIsProcessing(false);
+                                },
+                                prefill: {
+                                        name: customerdata.data?.name || "Customer",
+                                        email: customerdata.data?.email || "",
+                                        contact: customerdata.data?.mobile || ""
+                                },
+                                theme: {
+                                        color: "#4caf50"
+                                }
+                        };
+
+                        const rzp = new window.Razorpay(options);
+                        rzp.on('payment.failed', function (response) {
+                                showPopup("Payment Failed!", "error");
+                        });
+                        rzp.open();
+
+                        setIsProcessing(false);
+                } else {
+                        console.error("Order ID not found!");
+                }
+        };
         useEffect(() => {
                 let interval;
 
@@ -275,9 +349,14 @@ const DineInBilling = () => {
                                                                         {/* ── Actions ── */}
                                                                         <div className="payment-interaction-zone">
                                                                                 {orderData?.adminstatus === 0 ? (
-                                                                                        <button className="main-btn plr-40 mx-auto" onClick={PayViaCashFunction} disabled={isProcessing}>
-                                                                                                {isProcessing ? "Processing..." : "Pay Via Cash"}
-                                                                                        </button>
+                                                                                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', width: '100%', flexDirection: isMobile ? 'column' : 'row' }}>
+                                                                                                <button className="main-btn plr-40 mx-auto" onClick={PayViaCashFunction} disabled={isProcessing} style={{ width: isMobile ? '100%' : 'auto' }}>
+                                                                                                        {isProcessing ? "Processing..." : "Pay with Cash"}
+                                                                                                </button>
+                                                                                                <button className="main-btn plr-40 mx-auto" onClick={PayOnlineFunction} disabled={isProcessing} style={{ width: isMobile ? '100%' : 'auto' }}>
+                                                                                                        {isProcessing ? "Processing..." : "Pay Online"}
+                                                                                                </button>
+                                                                                        </div>
                                                                                 ) : (
                                                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}>
                                                                                                 {orderData?.adminstatus === 2 ? (

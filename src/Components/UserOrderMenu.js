@@ -68,10 +68,22 @@ export default function UserOrderMenu() {
 
     const fetchData = async () => {
       try {
-        const [catRes, foodRes] = await Promise.all([
+        const [catRes, foodRes, tablesRes] = await Promise.all([
           BackendApis.FetchCategories(),
           BackendApis.FetchFoodItems(),
+          BackendApis.FreeTables()
         ]);
+
+        // Check if our table was freed by admin
+        const allTables = tablesRes.data || [];
+        const currentTable = allTables.find((t) => t._id === tabledata.data.id);
+        
+        if (currentTable && currentTable.isavailable === 1) {
+          Methods.deleteCookie("selectedTable");
+          Methods.deleteCookie("addtocart");
+          navigate("/dine-in/select-table");
+          return;
+        }
 
         setCategories(catRes.data || []);
         setFoodItems(foodRes.data || []);

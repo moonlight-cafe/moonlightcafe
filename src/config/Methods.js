@@ -1,7 +1,78 @@
-import "../Methods.css";
+import "./Methods.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ConfigClass from "./Config.js";
+import React, { useState, useEffect } from "react";
+
+const BillViewerModal = ({ billUrl, onClose }) => {
+        const [htmlContent, setHtmlContent] = useState('');
+        const [loading, setLoading] = useState(true);
+        const [isAnimatingOut, setIsAnimatingOut] = useState(false);
+
+    useEffect(() => {
+        if (billUrl) {
+            setLoading(true);
+            fetch(billUrl)
+                .then(response => response.text())
+                .then(html => {
+                    // Replace 'body {' with '.bill-container {' to prevent global style override
+                    const safeHtml = html.replace(/body\s*\{/gi, '.bill-container {');
+                    setHtmlContent(safeHtml);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error("Failed to load bill HTML", err);
+                    setHtmlContent(`<div style="padding: 40px; color: red; text-align: center;">Error loading bill: ${err.message}. Please use the Download button.</div>`);
+                    setLoading(false);
+                });
+        }
+    }, [billUrl]);
+
+        const handlePrint = () => {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => {
+                        printWindow.print();
+                        printWindow.close();
+                }, 500);
+        };
+
+        const handleClose = () => {
+                setIsAnimatingOut(true);
+                setTimeout(() => onClose(), 300);
+        };
+
+        if (!billUrl) return null;
+
+        return (
+                <div className="modal-overlay user-not-select" style={{ zIndex: 99999999999999 }}>
+                        <div className={`modal-content-select order-modal width-60 ${isAnimatingOut ? "fade-out" : ""}`} style={{ height: '90vh', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+                                <button className="sidebar-close-btn" onClick={handleClose}>
+                                        <span className="material-symbols-outlined fs-20">close</span>
+                                </button>
+
+                                <h3 className="modal-title mt-30 m-0" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                                        <span>Bill Viewer</span>
+                                        <button className="main-btn" onClick={handlePrint} disabled={loading || !htmlContent} style={{ marginRight: 50 }}>
+                                                <i className="fa-solid fa-print"></i> Print / Download PDF
+                                        </button>
+                                </h3>
+
+                <div className="card-ui" style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, padding: 0, overflow: 'auto', color: '#000' }}>
+                    {loading ? (
+                        <div style={{ padding: 40, textAlign: 'center', color: '#666' }}>Loading Bill...</div>
+                    ) : htmlContent ? (
+                        <div className="bill-container" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                    ) : (
+                        <div style={{ padding: 40, textAlign: 'center', color: '#ff4d4d' }}>Invalid Bill URL or Bill Not Found</div>
+                    )}
+                </div>
+                        </div>
+                </div>
+        );
+};
 
 const Config = new ConfigClass();
 const cafeurl = Config.moonlightcafelogo;
@@ -14,6 +85,10 @@ class Methods {
                         once: true,
                         easing: "ease-in-out",
                 });
+        }
+
+        renderBillViewer(billUrl, onClose) {
+                return <BillViewerModal billUrl={billUrl} onClose={onClose} />;
         }
 
         refreshAOS() {
@@ -191,7 +266,13 @@ class Methods {
         }
 
         checkLoginStatus() {
-                const userData = this.getCookie("customerdata");
+                let userData = this.getCookie("customerdata");
+                if (!userData) {
+                        try {
+                                const local = localStorage.getItem("customerdata");
+                                if (local) userData = JSON.parse(local);
+                        } catch (e) { }
+                }
                 if (!userData || !userData.email) {
                         return { status: 400, data: {} };
                 }
@@ -377,6 +458,16 @@ class Methods {
                                 <span className="tooltip-box">{text}</span>
                         </div>
                 );
+        }
+
+        loadRazorpayScript() {
+                return new Promise((resolve) => {
+                        const script = document.createElement("script");
+                        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                        script.onload = () => resolve(true);
+                        script.onerror = () => resolve(false);
+                        document.body.appendChild(script);
+                });
         }
 }
 

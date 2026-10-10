@@ -73,7 +73,7 @@ export default class APIs {
                         return { ...response.data, __headers: response.headers };
                 } catch (error) {
                         if (error.response) return error.response.data;
-                        return { status: 500, message: "Network Connection Error" };
+                        return { status: 500, message: "Server Not Reachable" };
                 }
         }
 
@@ -83,7 +83,7 @@ export default class APIs {
                         return response.data;
                 } catch (error) {
                         if (error.response) return error.response.data;
-                        return { status: 500, message: "Network Connection Error" };
+                        return { status: 500, message: "Server Not Reachable" };
                 }
         }
 
@@ -111,7 +111,36 @@ export default class APIs {
                 if (result.status === 200) {
                         Method.setCookie("customerdata", result);
                 }
+                return result;
+        }
 
+        async LoginData() {
+                const result = await this.safePost("logindata", {});
+                if (result.status === 200 && result.data) {
+                        const newCustomerData = {
+                                status: 200,
+                                message: result.message,
+                                name: result.data.name,
+                                number: result.data.number,
+                                uniqueid: result.data.uniqueid,
+                                email: result.data.email,
+                                _id: result.data._id,
+                                darkmodeaccess: result.data.darkmodeaccess
+                        };
+                        Method.setCookie("customerdata", newCustomerData);
+                        localStorage.setItem("customerdata", JSON.stringify(newCustomerData));
+                        if (result.bgimgs) {
+                                Method.setCookie("backgroundimgs", result.bgimgs);
+                                localStorage.setItem("backgroundimgs", JSON.stringify(result.bgimgs));
+                        }
+
+                        if (!result.data.tblno) {
+                                Method.deleteCookie("selectedTable");
+                                localStorage.removeItem("selectedTable");
+                        }
+                        window.dispatchEvent(new CustomEvent("customerDataUpdated", { detail: newCustomerData }));
+                        window.dispatchEvent(new Event("themeChanged"));
+                }
                 return result;
         }
 
@@ -139,12 +168,29 @@ export default class APIs {
                         const response = await axios.post(`${Config.backendurl}list/orders`, {});
                         return response.data;
                 } catch (error) {
-                        return { status: 500, message: "Network Connection Error" };
+                        return { status: 500, message: "Server Not Reachable" };
                 }
         }
 
         CustomerChangePassword(email, oldpassword, newpassword) {
                 return this.safePost("customer/change/password", { email, oldpassword, newpassword });
+        }
+
+        async ChangeTheme(id, darkmodeaccess) {
+                const result = await this.safePost("customer/change/theme", { _id: id, darkmodeaccess: darkmodeaccess });
+                if (result.status === 200) {
+                        const customer = Method.getCookie("customerdata");
+
+                        if (!customer) return;
+
+                        const updated = {
+                                ...JSON.parse(customer),
+                                darkmodeaccess: darkmodeaccess
+                        };
+
+                        Method.setCookie("customerdata", updated);
+                }
+                return result;
         }
 
         FetchCustomerDetails(customerid) {
@@ -186,7 +232,7 @@ export default class APIs {
 
                         return response.data;
                 } catch (error) {
-                        return { status: 500, message: "Network Connection Error" };
+                        return { status: 500, message: "Server Not Reachable" };
                 }
         }
 
@@ -299,5 +345,13 @@ export default class APIs {
 
         fetchBackground() {
                 return this.safePost("background/list", {});
+        }
+
+        RazorpayCreateOrder(payload) {
+                return this.safePost("payment/razorpay/create", payload);
+        }
+
+        RazorpayVerifyPayment(payload) {
+                return this.safePost("payment/razorpay/verify", payload);
         }
 }

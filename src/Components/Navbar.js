@@ -13,6 +13,7 @@ const Navbar = forwardRef((props, ref) => {
     const [popupOpen, setPopupOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [sidebarType, setSidebarType] = useState('orders'); // 'orders' or 'favs'
+    const [darkMode, setDarkMode] = useState(false);
 
     // Global Password Modal State
     const [isPwdModalOpen, setIsPwdModalOpen] = useState(false);
@@ -22,6 +23,7 @@ const Navbar = forwardRef((props, ref) => {
 
     const [popup, setPopup] = useState({ message: "", type: "", visible: false });
     const popupTimer = useRef(null);
+    const [viewingBillUrl, setViewingBillUrl] = useState(null);
 
     // Internal Modal Handlers
     const handleUpdatePassword = async () => {
@@ -66,6 +68,26 @@ const Navbar = forwardRef((props, ref) => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (customerdata.status === 200) {
+            setDarkMode(customerdata.data.darkmodeaccess);
+            Methods.setCookie("theme", customerdata.data.darkmodeaccess ? "dark" : "light");
+            window.dispatchEvent(new Event("themeChanged"));
+        }
+    }, [navigate]);
+
+    const toggleDark = async () => {
+        const current = Number(customerdata.data.darkmodeaccess);
+        const next = current === 0 ? 1 : 0;
+
+        const res = await BackendAPIs.ChangeTheme(userId, next);
+
+        if (res?.status === 200) {
+            setDarkMode(next);
+            window.dispatchEvent(new Event("themeChanged"));
+        }
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -188,7 +210,7 @@ const Navbar = forwardRef((props, ref) => {
                                         <button className="main-btn width-40 mx-auto mtb-10" style={{ display: 'flex' }} onClick={() => navigate(`/orderdetails/${order._id}`)}>
                                             Details
                                         </button>
-                                        <button className="main-btn width-40 mx-auto mtb-10" style={{ display: 'flex' }} onClick={() => window.open(`${order.bill}`, '_blank')}>
+                                        <button className="main-btn width-40 mx-auto mtb-10" style={{ display: 'flex' }} onClick={() => setViewingBillUrl(order.bill)}>
                                             View Bill
                                         </button>
                                     </div>
@@ -279,6 +301,18 @@ const Navbar = forwardRef((props, ref) => {
                                     <button className="drop-item" onClick={fetchFavoriteItems}>
                                         <span className="material-symbols-outlined drop-item-icon">favorite</span> Favorites
                                     </button>
+                                    {/* <button className="drop-item dark-mode-item" onClick={toggleDark} type="button">
+                                        <span className="dark-mode-label">
+                                            <span className="material-symbols-outlined drop-item-icon">
+                                                {darkMode ? "light_mode" : "dark_mode"}
+                                            </span>
+                                            {darkMode ? "Transparent Mode" : "Dark Mode"}
+                                        </span>
+                                        <span className={`dark-mode-switch ${darkMode ? "on" : ""}`}>
+                                            <span className="dark-mode-thumb"></span>
+                                        </span>
+                                    </button> */}
+
                                     <div className="drop-separator"></div>
                                     <button className="drop-item logout-btn" onClick={() => { setPopupOpen(false); navigate(`/user/logout/${userId}`); }}>
                                         <span className="material-symbols-outlined drop-item-icon">logout</span> Logout
@@ -305,7 +339,7 @@ const Navbar = forwardRef((props, ref) => {
                     <span className="material-symbols-outlined fs-20">close</span>
                 </button>
 
-                <h3>{sidebarType === 'orders' ? 'Order History' : 'Favorites'}</h3>
+                <h3>{sidebarType === 'orders' ? 'Orders' : 'Favorites'}</h3>
 
                 <div className="sidebar-form sidebar-scrollable">
                     {sidebarType === 'orders' ? renderOldOrders() : renderFavItems()}
@@ -378,6 +412,7 @@ const Navbar = forwardRef((props, ref) => {
 
             {/* Methods.renderPopup should be outside but within the fragment */}
             {Methods.renderPopup(popup, () => Methods.hidePopup(setPopup))}
+            {Methods.renderBillViewer(viewingBillUrl, () => setViewingBillUrl(null))}
         </>
     );
 });
