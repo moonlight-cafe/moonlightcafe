@@ -144,7 +144,7 @@ const TakeAwayOrderHistory = () => {
         return (
                 <>
                         <div className="order-history-wrapper">
-                                <h1 className='order-history-heading'>Order History</h1>
+                                <h1 className='order-history-heading'>Orders</h1>
 
                                 <div className="final-total-amount user-not-select">
                                         {Methods.tooltip(

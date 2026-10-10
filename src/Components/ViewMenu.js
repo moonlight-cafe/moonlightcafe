@@ -198,7 +198,7 @@ export default function ViewMenu() {
         onClick={scrollToTop}
         aria-label="Scroll to top"
       >
-        <span className="material-symbols-outlined">keyboard_arrow_up</span>
+        <span className="material-symbols-outlined scroll-top-btn-span">keyboard_arrow_up</span>
       </button>
     </div>
   );

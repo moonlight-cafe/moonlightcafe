@@ -50,7 +50,7 @@ const OrderHistory = () => {
                                 const response = await BackendAPIs.ViewCart(customer._id, 1);
                                 setOrders(response.data || []);
                         } catch (error) {
-                                console.error("Error fetching order history:", error);
+                                console.error("Error fetching orders:", error);
                         } finally {
                                 setLoadingOrders(false);
                         }

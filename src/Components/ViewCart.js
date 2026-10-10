@@ -63,7 +63,7 @@ export default function ViewCart() {
   const selectedDishes = cartItems.length;
 
   const calculateTotalPrice = useCallback((items) => {
-    const subtotal = items.reduce((acc, item) => acc + Number(item.price), 0);
+    const subtotal = items.reduce((acc, item) => acc + (Number(item.price) * Number(item.quantity || 1)), 0);
     setTotalPrice(subtotal);
   }, []);
 
@@ -93,9 +93,7 @@ export default function ViewCart() {
 
     const updatedItems = cartItems.map((item) => {
       if (item.foodid === foodid) {
-        const unitPrice = Number(item.unitPrice) || Number(item.price) / Number(item.quantity || 1);
-        const newPrice = unitPrice * newQuantity;
-        return { ...item, quantity: newQuantity, price: newPrice.toString() };
+        return { ...item, quantity: newQuantity };
       }
       return item;
     });
@@ -188,7 +186,7 @@ export default function ViewCart() {
 
           <div className="context-board-grid">
             <div className="context-detail-card">
-              <span className="context-detail-label main-color">Serving Table</span>
+              <span className="context-detail-label main-color">Table</span>
               <div className="context-detail-value">
                 <span className="material-symbols-outlined">table_restaurant</span>
                 <strong>{tableNo}</strong>
@@ -196,7 +194,7 @@ export default function ViewCart() {
             </div>
 
             <div className="context-detail-card">
-              <span className="context-detail-label main-color">Customer Name</span>
+              <span className="context-detail-label main-color">Name</span>
               <div className="context-detail-value">
                 <span className="material-symbols-outlined">person</span>
                 <strong>{clientName}</strong>
@@ -205,7 +203,7 @@ export default function ViewCart() {
 
             {clientEmail ? (
               <div className="context-detail-card">
-                <span className="context-detail-label main-color">Login Email</span>
+                <span className="context-detail-label main-color">Email</span>
                 <div className="context-detail-value">
                   <span className="material-symbols-outlined">alternate_email</span>
                   <strong>{clientEmail}</strong>
@@ -222,15 +220,15 @@ export default function ViewCart() {
             <span className="material-symbols-outlined">shopping_bag</span>
             <h2>Your cart is empty...</h2>
             <p>Ready to discover some spectacular flavors?</p>
-            <button className="main-cancle-btn mt-25" onClick={() => navigate(`/dine-in/menu/${tabledata.data.id}`)}>
-              Browse the Menu
-            </button><br />
+            <button className="main-btn mt-25 mr-25" onClick={() => navigate(`/dine-in/menu/${tabledata.data.id}`)}>
+              Explore Menu
+            </button>
             <button className="main-btn mt-25" onClick={() => {
               setTimeout(() => {
                 navigate(`/order/summery/${tabledata.data.id}`);
               }, 1200);
             }}>
-              Order History
+              Orders
             </button>
           </div>
         ) : (
@@ -251,7 +249,7 @@ export default function ViewCart() {
                     </div>
 
                     <div className="item-bottom-row">
-                      <div className="item-price-glow">₹{parseFloat(item.price).toFixed(2)}</div>
+                      <div className="item-price-glow">₹{(parseFloat(item.price) * (item.quantity || 1)).toFixed(2)}</div>
                       <div className="qty-stepper">
                         <button onClick={() => handleQuantityChange(item.foodid, item.quantity - 1)}>
                           <span className="material-symbols-outlined">remove</span>

@@ -51,6 +51,8 @@ const ThankYouPage = () => {
     useEffect(() => {
         setShowRating(true);
         verifyOrder();
+        Method.deleteCookie("selectedTable");
+        Method.deleteCookie("takeaway");
     }, []);
 
     const submitRating = () => {

@@ -27,30 +27,42 @@ export default function DineinSelectTable() {
   };
 
   const tableRefs = useRef([]);
-  const fetchTables = async () => {
-    try {
-      const response = await BackendAPIs.FreeTables()
-      setTables(response.data);
-    } catch (err) {
-      console.error("Error fetching tables:", err);
-      setError("Failed to fetch tables.");
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
+    const checkAndFetchTables = async () => {
+      try {
+        const response = await BackendAPIs.FreeTables();
+        const allTables = response.data || [];
+        setTables(allTables);
+
+        if (tabledata.status === 200) {
+          const selectedTableId = tabledata.data.id;
+          const currentTable = allTables.find((t) => t._id === selectedTableId);
+
+          if (currentTable && currentTable.isavailable === 1) {
+            // Admin freed the table, but user still has cookie
+            Methods.deleteCookie("selectedTable");
+            Methods.deleteCookie("addtocart");
+            window.location.reload(); // Reload to clear states and show selection
+          } else {
+            // Table is still booked, proceed to menu
+            navigate(`/dine-in/menu/${selectedTableId}`);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching tables:", err);
+        setError("Failed to fetch tables.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     if (customerdata.status !== 200) {
       localStorage.setItem("redirectAfterLogin", window.location.pathname);
       navigate("/login");
       return;
     }
 
-    if (tabledata.status === 200) {
-      navigate(`/dine-in/menu/${tabledata.data.id}`);
-      return;
-    }
-
-    fetchTables();
+    checkAndFetchTables();
 
     AOS.init({
       duration: 800,

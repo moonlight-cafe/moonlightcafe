@@ -22,6 +22,7 @@ export default function UserProfile() {
     const [pwdData, setPwdData] = useState({ old: "", new: "", confirm: "" });
     const [pwdLoading, setPwdLoading] = useState(false);
     const [pwdVisible, setPwdVisible] = useState({ old: false, new: false, confirm: false });
+    const [darkMode, setDarkMode] = useState(false);
 
     const [updatedData, setUpdatedData] = useState({ name: "", email: "", number: "" });
 
@@ -40,6 +41,9 @@ export default function UserProfile() {
                 const response = await BackendApis.FetchCustomerDetails(customer._id);
                 if (response.status === 200) {
                     setUserData(response.data[0]);
+                    setDarkMode(response.data[0].darkmodeaccess);
+                    Methods.setCookie("theme", response.data[0].darkmodeaccess ? "dark" : "light");
+                    window.dispatchEvent(new Event("themeChanged"));
                 } else {
                     showPopup(response.message || "Failed to fetch data.");
                 }
@@ -48,6 +52,19 @@ export default function UserProfile() {
         };
         fetchCustomerData();
     }, [navigate]);
+
+    const toggleDark = async () => {
+        const current = Number(userData.darkmodeaccess);
+        const next = current === 0 ? 1 : 0;
+
+        const res = await BackendApis.ChangeTheme(userData._id, next);
+
+        if (res?.status === 200) {
+            setDarkMode(next);
+            setUserData(prev => ({ ...prev, darkmodeaccess: next }));
+            window.dispatchEvent(new Event("themeChanged"));
+        }
+    };
 
     const openEditModal = () => {
         setUpdatedData({
@@ -190,6 +207,17 @@ export default function UserProfile() {
                                         <p className="info-value" style={{ fontSize: "16px" }}>Change Security Password</p>
                                     </div>
                                     <span className="material-symbols-outlined" style={{ marginLeft: "auto", color: "#47d9a8" }}>edit</span>
+                                </div>
+                                <div className="info-item cursor-pointer" onClick={toggleDark} style={{ cursor: "pointer" }}>
+                                    <span className="material-symbols-outlined profile-item-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        {darkMode ? "light_mode" : "dark_mode"}
+                                    </span>
+                                    <div className="info-text">
+                                        <p className="info-value" style={{ fontSize: "16px" }}>{darkMode ? "Transparent Mode" : "Dark Mode"}</p>
+                                    </div>
+                                    <span className={`dark-mode-switch ${darkMode ? "on" : ""}`} style={{ marginLeft: "auto" }}>
+                                        <span className="dark-mode-thumb"></span>
+                                    </span>
                                 </div>
                                 <div className="info-item cursor-pointer" onClick={() => navigate(`/user/logout/${userData._id}`)} style={{ cursor: "pointer", borderColor: "rgba(255, 82, 82, 0.3)" }}>
                                     <span className="material-symbols-outlined profile-item-icon" style={{ background: "rgba(255, 82, 82, 0.1)", color: "#ff5252", display: "flex", alignItems: "center", justifyContent: "center" }}>logout</span>

@@ -43,7 +43,7 @@ export default function TakeAwayViewCart() {
 
         const calculateTotalPrice = useCallback((items) => {
                 const subtotal = items.reduce(
-                        (acc, item) => acc + Number(item.price),
+                        (acc, item) => acc + (Number(item.price) * Number(item.quantity || 1)),
                         0
                 );
                 setTotalPrice(subtotal);
@@ -77,14 +77,9 @@ export default function TakeAwayViewCart() {
 
                 const updatedItems = cartItems.map((item) => {
                         if (item.foodid === foodid) {
-                                const unitPrice =
-                                        Number(item.unitPrice) ||
-                                        Number(item.price) / Number(item.quantity || 1);
-                                const newPrice = unitPrice * newQuantity;
                                 return {
                                         ...item,
                                         quantity: newQuantity,
-                                        price: newPrice.toString(),
                                 };
                         }
                         return item;
@@ -184,7 +179,7 @@ export default function TakeAwayViewCart() {
 
                                                                         <div className="view-cart-item-details">
                                                                                 <h4 className="view-cart-item-details-h4">{item.foodname}</h4>
-                                                                                <p className="view-cart-item-details-p fs-18">Price: ₹{Number(item.price).toFixed(2)}</p>
+                                                                                <p className="view-cart-item-details-p fs-18">Price: ₹{(Number(item.price) * Number(item.quantity || 1)).toFixed(2)}</p>
                                                                                 <div className="quantity-controls">
                                                                                         <button className="main-btn plr-10 ptb-1" onClick={() => handleQuantityChange(item.foodid, item.quantity - 1)}>
                                                                                                 <span className="material-symbols-outlined mt-5">remove</span>
